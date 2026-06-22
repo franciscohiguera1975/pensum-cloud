@@ -103,9 +103,10 @@ function SubjectCard({
   onDragStart?: () => void;
   onDragEnd?: () => void;
 }) {
-  const topics = subject.description
+  const topics = (subject.description
     ? subject.description.split(/[\n;]/).map((t) => t.trim()).filter(Boolean)
-    : [];
+    : []
+  ).slice(0, 4);
 
   return (
     <div
@@ -113,32 +114,32 @@ function SubjectCard({
       draggable={editable}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className={`rounded-lg overflow-hidden border border-teal-200 shadow-sm flex flex-col transition-opacity h-[195px] ${
+      className={`rounded-lg overflow-hidden border border-teal-200 shadow-sm flex flex-col transition-opacity h-[210px] ${
         editable ? 'cursor-grab active:cursor-grabbing' : ''
       } ${isDragging ? 'opacity-30' : 'opacity-100'}`}
     >
-      {/* Teal header */}
-      <div className="bg-teal-500 px-3 py-2 flex items-start justify-between gap-1">
-        <p className="font-semibold text-white text-xs leading-snug">{subject.name}</p>
+      {/* Teal header — fixed height */}
+      <div className="bg-teal-500 px-3 h-12 shrink-0 flex items-center justify-between gap-1">
+        <p className="font-semibold text-white text-xs leading-snug line-clamp-2">{subject.name}</p>
         {editable && (
           <button
             onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
             title="Editar materia"
-            className="shrink-0 w-5 h-5 rounded flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors text-sm mt-px"
+            className="shrink-0 w-5 h-5 rounded flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors text-sm"
           >
             ✎
           </button>
         )}
       </div>
 
-      {/* Content */}
-      <div className="px-3 py-2.5 bg-white flex-1 overflow-y-auto min-h-[64px]">
+      {/* Content — flex-1, exactly 4 bullets */}
+      <div className="px-3 py-2.5 bg-white flex-1 overflow-hidden">
         {topics.length > 0 ? (
           <ul className="space-y-1">
             {topics.map((topic, i) => (
               <li key={i} className="flex gap-1.5 text-xs text-gray-700 leading-snug">
-                <span className="text-teal-500 shrink-0 font-bold mt-px">•</span>
-                <span>{topic}</span>
+                <span className="text-teal-500 shrink-0 font-bold">•</span>
+                <span className="line-clamp-1">{topic}</span>
               </li>
             ))}
           </ul>

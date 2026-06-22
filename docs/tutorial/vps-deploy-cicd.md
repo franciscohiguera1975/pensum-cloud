@@ -156,6 +156,7 @@ Copia la clave pública y agrégala en GitHub:
 Luego clona con SSH:
 ```bash
 GIT_SSH_COMMAND="ssh -i ~/.ssh/github_deploy" git clone git@github.com:<TU_ORG>/<TU_REPO>.git .
+GIT_SSH_COMMAND="ssh -i ~/.ssh/github_deploy" git clone git@github.com:franciscohiguera1975/pensum-cloud.git .
 ```
 
 ---

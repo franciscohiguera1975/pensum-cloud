@@ -11,17 +11,17 @@ async function main(): Promise<void> {
   // ────────────────────────────────────────────────────────────────────────────
   const adminRole = await prisma.role.upsert({
     where: { name: 'ADMIN' },
-    update: {},
+    update: { description: 'Platform administrator' },
     create: { name: 'ADMIN', description: 'Platform administrator' },
   });
   const coordinatorRole = await prisma.role.upsert({
     where: { name: 'COORDINATOR' },
-    update: {},
+    update: { description: 'Curriculum coordinator' },
     create: { name: 'COORDINATOR', description: 'Curriculum coordinator' },
   });
   const viewerRole = await prisma.role.upsert({
     where: { name: 'VIEWER' },
-    update: {},
+    update: { description: 'Read-only viewer' },
     create: { name: 'VIEWER', description: 'Read-only viewer' },
   });
   console.log('✅ Roles:', adminRole.name, coordinatorRole.name, viewerRole.name);
@@ -99,7 +99,7 @@ async function main(): Promise<void> {
 
   const careerDS = await prisma.career.upsert({
     where: { facultyId_code: { facultyId: facultyFTI.id, code: 'DS' } },
-    update: {},
+    update: { description: 'Carrera en Desarrollo de Software orientada al mercado laboral tecnológico' },
     create: {
       tenantId: tid,
       facultyId: facultyFTI.id,
@@ -122,7 +122,7 @@ async function main(): Promise<void> {
 
   const currV1 = await prisma.curriculum.upsert({
     where: { careerId_version: { careerId: careerDS.id, version: '2024-1' } },
-    update: {},
+    update: { description: 'Plan de estudios versión 2024-1 (Pensum Verde)' },
     create: {
       tenantId: tid,
       careerId: careerDS.id,
@@ -478,7 +478,7 @@ async function main(): Promise<void> {
 
   const currV2 = await prisma.curriculum.upsert({
     where: { careerId_version: { careerId: careerDS.id, version: '2024-2' } },
-    update: {},
+    update: { description: 'Plan de estudios versión 2024-2 (Pensum Cyan)' },
     create: {
       tenantId: tid,
       careerId: careerDS.id,
@@ -838,7 +838,7 @@ async function main(): Promise<void> {
   // ══════════════════════════════════════════════════════════════════════════════
   const careerIS = await prisma.career.upsert({
     where: { facultyId_code: { facultyId: facultyFE.id, code: 'IS' } },
-    update: {},
+    update: { description: 'Carrera orientada al diseño, construcción y evolución de sistemas de software de calidad' },
     create: {
       tenantId: tid,
       facultyId: facultyFE.id,
@@ -906,7 +906,7 @@ async function main(): Promise<void> {
 
   const isV1 = await prisma.curriculum.upsert({
     where: { careerId_version: { careerId: careerIS.id, version: '2025-1' } },
-    update: {},
+    update: { description: 'Malla específica de 8 semestres con nombres descriptivos por dominio tecnológico' },
     create: {
       tenantId: tid,
       careerId: careerIS.id,
@@ -926,67 +926,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s1.id, code: 'ALG-101' } },
-    update: { description: 'Álgebra lineal: vectores, matrices, valores propios y aplicaciones en ML' },
+    update: { description: 'Vectores y matrices; Valores propios; Transformaciones lineales; Aplicaciones en ML' },
     create: {
       tenantId: tid, semesterId: isV1s1.id,
       name: 'Álgebra Lineal',               code: 'ALG-101',
       credits: 3, hoursTheory: 32,          hoursPractice: 16,
-      description: 'Álgebra lineal: vectores, matrices, valores propios y aplicaciones en ML',
+      description: 'Vectores y matrices; Valores propios; Transformaciones lineales; Aplicaciones en ML',
     },
   });
 
   const isV1s1FPR = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s1.id, code: 'FPR-101' } },
-    update: { description: 'Algoritmos, estructuras de control, arreglos y programación con Python' },
+    update: { description: 'Algoritmos y pseudocódigo; Estructuras de control; Arreglos y funciones; Python básico' },
     create: {
       tenantId: tid, semesterId: isV1s1.id,
       name: 'Fundamentos de Programación',  code: 'FPR-101',
       credits: 4, hoursTheory: 48,          hoursPractice: 16,
-      description: 'Algoritmos, estructuras de control, arreglos y programación con Python',
+      description: 'Algoritmos y pseudocódigo; Estructuras de control; Arreglos y funciones; Python básico',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s1.id, code: 'SOP-101' } },
-    update: { description: 'Procesos, memoria, sistema de archivos, virtualización y administración Linux' },
+    update: { description: 'Gestión de procesos; Administración de memoria; Sistema de archivos; Virtualización Linux' },
     create: {
       tenantId: tid, semesterId: isV1s1.id,
       name: 'Sistemas Operativos',          code: 'SOP-101',
       credits: 3, hoursTheory: 32,          hoursPractice: 16,
-      description: 'Procesos, memoria, sistema de archivos, virtualización y administración Linux',
+      description: 'Gestión de procesos; Administración de memoria; Sistema de archivos; Virtualización Linux',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s1.id, code: 'EPD-101' } },
-    update: { description: 'Git, terminal, shell scripting, IDEs, linters y documentación técnica' },
+    update: { description: 'Git y control de versiones; Terminal y shell scripting; IDEs y linters; Documentación técnica' },
     create: {
       tenantId: tid, semesterId: isV1s1.id,
       name: 'Entorno Profesional de Desarrollo', code: 'EPD-101',
       credits: 3, hoursTheory: 32,               hoursPractice: 16,
-      description: 'Git, terminal, shell scripting, IDEs, linters y documentación técnica',
+      description: 'Git y control de versiones; Terminal y shell scripting; IDEs y linters; Documentación técnica',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s1.id, code: 'CTE-101' } },
-    update: { description: 'Redacción técnica, documentación de APIs y comunicación en equipos ágiles' },
+    update: { description: 'Redacción técnica; Documentación de APIs; Comunicación en equipos; Presentaciones técnicas' },
     create: {
       tenantId: tid, semesterId: isV1s1.id,
       name: 'Comunicación Técnica',          code: 'CTE-101',
       credits: 2, hoursTheory: 32,           hoursPractice: 0,
-      description: 'Redacción técnica, documentación de APIs y comunicación en equipos ágiles',
+      description: 'Redacción técnica; Documentación de APIs; Comunicación en equipos; Presentaciones técnicas',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s1.id, code: 'GET-101' } },
-    update: { description: 'Modelos de negocio TI, gestión financiera, propiedad intelectual y ética' },
+    update: { description: 'Modelos de negocio TI; Gestión financiera; Propiedad intelectual; Ética profesional' },
     create: {
       tenantId: tid, semesterId: isV1s1.id,
       name: 'Gestión y Emprendimiento TI',   code: 'GET-101',
       credits: 2, hoursTheory: 32,           hoursPractice: 0,
-      description: 'Modelos de negocio TI, gestión financiera, propiedad intelectual y ética',
+      description: 'Modelos de negocio TI; Gestión financiera; Propiedad intelectual; Ética profesional',
     },
   });
 
@@ -999,67 +999,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s2.id, code: 'MDI-201' } },
-    update: { description: 'Lógica, conjuntos, grafos, combinatoria y probabilidad discreta' },
+    update: { description: 'Lógica proposicional; Conjuntos y grafos; Combinatoria; Probabilidad discreta' },
     create: {
       tenantId: tid, semesterId: isV1s2.id,
       name: 'Matemática Discreta',           code: 'MDI-201',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Lógica, conjuntos, grafos, combinatoria y probabilidad discreta',
+      description: 'Lógica proposicional; Conjuntos y grafos; Combinatoria; Probabilidad discreta',
     },
   });
 
   const isV1s2EBD = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s2.id, code: 'EBD-201' } },
-    update: { description: 'Estructuras de datos, modelado relacional, SQL avanzado y stored procedures' },
+    update: { description: 'Estructuras de datos; Modelado relacional; SQL avanzado; Stored procedures' },
     create: {
       tenantId: tid, semesterId: isV1s2.id,
       name: 'Estructuras de Datos y Bases de Datos Relacionales', code: 'EBD-201',
       credits: 4, hoursTheory: 48,                    hoursPractice: 16,
-      description: 'Estructuras de datos, modelado relacional, SQL avanzado y stored procedures',
+      description: 'Estructuras de datos; Modelado relacional; SQL avanzado; Stored procedures',
     },
   });
 
   const isV1s2POO = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s2.id, code: 'POO-201' } },
-    update: { description: 'Herencia, polimorfismo, patrones GoF, principios SOLID y TDD' },
+    update: { description: 'Herencia y polimorfismo; Patrones de diseño GoF; Principios SOLID; TDD básico' },
     create: {
       tenantId: tid, semesterId: isV1s2.id,
       name: 'Programación Orientada a Objetos', code: 'POO-201',
       credits: 4, hoursTheory: 48,              hoursPractice: 16,
-      description: 'Herencia, polimorfismo, patrones GoF, principios SOLID y TDD',
+      description: 'Herencia y polimorfismo; Patrones de diseño GoF; Principios SOLID; TDD básico',
     },
   });
 
   const isV1s2FIA = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s2.id, code: 'FIA-201' } },
-    update: { description: 'Agentes inteligentes, búsqueda heurística, sistemas expertos y lógica difusa' },
+    update: { description: 'Agentes inteligentes; Búsqueda heurística; Sistemas expertos; Lógica difusa' },
     create: {
       tenantId: tid, semesterId: isV1s2.id,
       name: 'Fundamentos de Inteligencia Artificial', code: 'FIA-201',
       credits: 3, hoursTheory: 32,                    hoursPractice: 16,
-      description: 'Agentes inteligentes, búsqueda heurística, sistemas expertos y lógica difusa',
+      description: 'Agentes inteligentes; Búsqueda heurística; Sistemas expertos; Lógica difusa',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s2.id, code: 'RYC-201' } },
-    update: { description: 'Modelo OSI, TCP/IP, protocolos HTTP/S, DNS, SSH y seguridad de redes' },
+    update: { description: 'Modelo OSI y TCP/IP; Protocolos HTTP/S y DNS; Configuración SSH; Seguridad de redes' },
     create: {
       tenantId: tid, semesterId: isV1s2.id,
       name: 'Redes y Conectividad',           code: 'RYC-201',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Modelo OSI, TCP/IP, protocolos HTTP/S, DNS, SSH y seguridad de redes',
+      description: 'Modelo OSI y TCP/IP; Protocolos HTTP/S y DNS; Configuración SSH; Seguridad de redes',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s2.id, code: 'IAS-201' } },
-    update: { description: 'Elicitación, modelado de requisitos, priorización y trazabilidad' },
+    update: { description: 'Elicitación de requisitos; Modelado UML; Priorización MoSCoW; Trazabilidad' },
     create: {
       tenantId: tid, semesterId: isV1s2.id,
       name: 'Ingeniería y Análisis de Requisitos', code: 'IAS-201',
       credits: 3, hoursTheory: 32,                 hoursPractice: 16,
-      description: 'Elicitación, modelado de requisitos, priorización y trazabilidad',
+      description: 'Elicitación de requisitos; Modelado UML; Priorización MoSCoW; Trazabilidad',
     },
   });
 
@@ -1072,67 +1072,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s3.id, code: 'CDI-301' } },
-    update: { description: 'Límites, derivadas, integrales, optimización y series de Taylor' },
+    update: { description: 'Límites y continuidad; Derivadas y optimización; Integrales definidas; Series de Taylor' },
     create: {
       tenantId: tid, semesterId: isV1s3.id,
       name: 'Cálculo Diferencial e Integral', code: 'CDI-301',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Límites, derivadas, integrales, optimización y series de Taylor',
+      description: 'Límites y continuidad; Derivadas y optimización; Integrales definidas; Series de Taylor',
     },
   });
 
   const isV1s3NSL = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s3.id, code: 'NSL-301' } },
-    update: { description: 'MongoDB, Redis, Cassandra, teorema CAP y selección SQL vs NoSQL' },
+    update: { description: 'MongoDB y Redis; Cassandra columnar; Teorema CAP; SQL vs NoSQL' },
     create: {
       tenantId: tid, semesterId: isV1s3.id,
       name: 'Bases de Datos NoSQL', code: 'NSL-301',
       credits: 3, hoursTheory: 48,            hoursPractice: 0,
-      description: 'MongoDB, Redis, Cassandra, teorema CAP y selección SQL vs NoSQL',
+      description: 'MongoDB y Redis; Cassandra columnar; Teorema CAP; SQL vs NoSQL',
     },
   });
 
   const isV1s3DBA = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s3.id, code: 'DBA-301' } },
-    update: { description: 'APIs REST, NestJS, JWT/OAuth2 y prevención de inyección SQL' },
+    update: { description: 'APIs REST con NestJS; Autenticación JWT/OAuth2; Prevención SQL injection; Testing de APIs' },
     create: {
       tenantId: tid, semesterId: isV1s3.id,
       name: 'Desarrollo Backend y APIs',      code: 'DBA-301',
       credits: 4, hoursTheory: 48,            hoursPractice: 16,
-      description: 'APIs REST, NestJS, JWT/OAuth2 y prevención de inyección SQL',
+      description: 'APIs REST con NestJS; Autenticación JWT/OAuth2; Prevención SQL injection; Testing de APIs',
     },
   });
 
   const isV1s3FHC = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s3.id, code: 'FHC-301' } },
-    update: { description: 'React, HCI, prototipado en Figma, accesibilidad WCAG y pruebas de usabilidad' },
+    update: { description: 'React y componentes; Prototipado en Figma; Accesibilidad WCAG; Pruebas de usabilidad' },
     create: {
       tenantId: tid, semesterId: isV1s3.id,
       name: 'Desarrollo Frontend e Interacción HCI', code: 'FHC-301',
       credits: 4, hoursTheory: 48,                   hoursPractice: 16,
-      description: 'React, HCI, prototipado en Figma, accesibilidad WCAG y pruebas de usabilidad',
+      description: 'React y componentes; Prototipado en Figma; Accesibilidad WCAG; Pruebas de usabilidad',
     },
   });
 
   const isV1s3MLC = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s3.id, code: 'MLC-301' } },
-    update: { description: 'Regresión, árboles, clustering, validación cruzada y selección de modelos' },
+    update: { description: 'Regresión y clasificación; Árboles de decisión; Clustering; Validación cruzada' },
     create: {
       tenantId: tid, semesterId: isV1s3.id,
       name: 'Machine Learning',               code: 'MLC-301',
       credits: 4, hoursTheory: 48,            hoursPractice: 16,
-      description: 'Regresión, árboles, clustering, validación cruzada y selección de modelos',
+      description: 'Regresión y clasificación; Árboles de decisión; Clustering; Validación cruzada',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s3.id, code: 'SDS-301' } },
-    update: { description: 'OWASP Top 10, TLS, autenticación multifactor y DevSecOps en CI/CD' },
+    update: { description: 'OWASP Top 10; TLS y cifrado; Autenticación multifactor; DevSecOps en CI/CD' },
     create: {
       tenantId: tid, semesterId: isV1s3.id,
       name: 'Seguridad en Desarrollo de Software', code: 'SDS-301',
       credits: 3, hoursTheory: 48,                 hoursPractice: 0,
-      description: 'OWASP Top 10, TLS, autenticación multifactor y DevSecOps en CI/CD',
+      description: 'OWASP Top 10; TLS y cifrado; Autenticación multifactor; DevSecOps en CI/CD',
     },
   });
 
@@ -1145,67 +1145,67 @@ async function main(): Promise<void> {
 
   const isV1s4BSD = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s4.id, code: 'BSD-401' } },
-    update: { description: 'Hadoop, Spark, Kafka, Data Lakes y arquitecturas Lambda/Kappa' },
+    update: { description: 'Hadoop y Spark; Apache Kafka; Data Lakes; Arquitecturas Lambda/Kappa' },
     create: {
       tenantId: tid, semesterId: isV1s4.id,
       name: 'Big Data y Procesamiento Distribuido', code: 'BSD-401',
       credits: 4, hoursTheory: 48,                    hoursPractice: 16,
-      description: 'Hadoop, Spark, Kafka, Data Lakes y arquitecturas Lambda/Kappa',
+      description: 'Hadoop y Spark; Apache Kafka; Data Lakes; Arquitecturas Lambda/Kappa',
     },
   });
 
   const isV1s4DVA = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s4.id, code: 'DVA-401' } },
-    update: { description: 'GraphQL, WebSockets, optimización frontend, i18n, accesibilidad y PWA' },
+    update: { description: 'GraphQL y WebSockets; Optimización frontend; Internacionalización; PWA y offline' },
     create: {
       tenantId: tid, semesterId: isV1s4.id,
       name: 'Aplicaciones Web Avanzadas',    code: 'DVA-401',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'GraphQL, WebSockets, optimización frontend, i18n, accesibilidad y PWA',
+      description: 'GraphQL y WebSockets; Optimización frontend; Internacionalización; PWA y offline',
     },
   });
 
   const isV1s4DLG = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s4.id, code: 'DLG-401' } },
-    update: { description: 'Redes neuronales, Transformers, modelos generativos, LLMs y RAG' },
+    update: { description: 'Redes neuronales profundas; Transformers y atención; Modelos generativos; LLMs y RAG' },
     create: {
       tenantId: tid, semesterId: isV1s4.id,
       name: 'Deep Learning e IA Generativa',  code: 'DLG-401',
       credits: 4, hoursTheory: 48,            hoursPractice: 16,
-      description: 'Redes neuronales, Transformers, modelos generativos, LLMs y RAG',
+      description: 'Redes neuronales profundas; Transformers y atención; Modelos generativos; LLMs y RAG',
     },
   });
 
   const isV1s4UXA = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s4.id, code: 'UXA-401' } },
-    update: { description: 'Investigación de usuarios, sistemas de diseño y auditoría de accesibilidad' },
+    update: { description: 'Investigación de usuarios; Sistemas de diseño; Auditoría WCAG; Métricas de experiencia' },
     create: {
       tenantId: tid, semesterId: isV1s4.id,
       name: 'UX Avanzado y Accesibilidad',    code: 'UXA-401',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Investigación de usuarios, sistemas de diseño y auditoría de accesibilidad',
+      description: 'Investigación de usuarios; Sistemas de diseño; Auditoría WCAG; Métricas de experiencia',
     },
   });
 
   const isV1s4DOP = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s4.id, code: 'DOP-401' } },
-    update: { description: 'CI/CD con GitHub Actions, Docker, estrategias de despliegue y monitoreo' },
+    update: { description: 'CI/CD con GitHub Actions; Docker y contenedores; Estrategias de despliegue; Monitoreo SRE' },
     create: {
       tenantId: tid, semesterId: isV1s4.id,
       name: 'DevOps, CI/CD y Contenedores',  code: 'DOP-401',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'CI/CD con GitHub Actions, Docker, estrategias de despliegue y monitoreo',
+      description: 'CI/CD con GitHub Actions; Docker y contenedores; Estrategias de despliegue; Monitoreo SRE',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s4.id, code: 'DSI-401' } },
-    update: { description: 'Modelado BPMN, UML, integración de sistemas y evaluación de viabilidad' },
+    update: { description: 'Modelado BPMN y UML; Integración de sistemas; Evaluación de viabilidad; Arquitectura SI' },
     create: {
       tenantId: tid, semesterId: isV1s4.id,
       name: 'Diseño de Sistemas de Información', code: 'DSI-401',
       credits: 3, hoursTheory: 32,               hoursPractice: 16,
-      description: 'Modelado BPMN, UML, integración de sistemas y evaluación de viabilidad',
+      description: 'Modelado BPMN y UML; Integración de sistemas; Evaluación de viabilidad; Arquitectura SI',
     },
   });
 
@@ -1218,67 +1218,67 @@ async function main(): Promise<void> {
 
   const isV1s5ARS = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s5.id, code: 'ARS-501' } },
-    update: { description: 'Microservicios, DDD, CQRS, Event Sourcing y observabilidad distribuida' },
+    update: { description: 'Microservicios y DDD; CQRS y Event Sourcing; Patrones arquitectónicos; Observabilidad' },
     create: {
       tenantId: tid, semesterId: isV1s5.id,
       name: 'Arquitectura de Software',       code: 'ARS-501',
       credits: 4, hoursTheory: 48,            hoursPractice: 16,
-      description: 'Microservicios, DDD, CQRS, Event Sourcing y observabilidad distribuida',
+      description: 'Microservicios y DDD; CQRS y Event Sourcing; Patrones arquitectónicos; Observabilidad',
     },
   });
 
   const isV1s5CCN = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s5.id, code: 'CCN-501' } },
-    update: { description: 'AWS/GCP/Azure, Kubernetes, Terraform e infraestructura cloud-native' },
+    update: { description: 'AWS, GCP y Azure; Kubernetes orquestación; Terraform IaC; Cloud-native patterns' },
     create: {
       tenantId: tid, semesterId: isV1s5.id,
       name: 'Computación en la Nube',              code: 'CCN-501',
       credits: 3, hoursTheory: 32,                 hoursPractice: 16,
-      description: 'AWS/GCP/Azure, Kubernetes, Terraform e infraestructura cloud-native',
+      description: 'AWS, GCP y Azure; Kubernetes orquestación; Terraform IaC; Cloud-native patterns',
     },
   });
 
   const isV1s5BIV = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s5.id, code: 'BIV-501' } },
-    update: { description: 'Data Warehouses, ETL/ELT con dbt, dashboards y métricas de negocio' },
+    update: { description: 'Data Warehouses; ETL/ELT con dbt; Dashboards BI; Métricas de negocio' },
     create: {
       tenantId: tid, semesterId: isV1s5.id,
       name: 'Business Intelligence y Visualización', code: 'BIV-501',
       credits: 3, hoursTheory: 48,                   hoursPractice: 0,
-      description: 'Data Warehouses, ETL/ELT con dbt, dashboards y métricas de negocio',
+      description: 'Data Warehouses; ETL/ELT con dbt; Dashboards BI; Métricas de negocio',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s5.id, code: 'CAL-501' } },
-    update: { description: 'Pruebas unitarias, E2E, TDD/BDD, carga con k6 e ISO 25010' },
+    update: { description: 'Pruebas unitarias y E2E; TDD y BDD; Pruebas de carga con k6; ISO 25010' },
     create: {
       tenantId: tid, semesterId: isV1s5.id,
       name: 'Calidad y Pruebas de Software',  code: 'CAL-501',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Pruebas unitarias, E2E, TDD/BDD, carga con k6 e ISO 25010',
+      description: 'Pruebas unitarias y E2E; TDD y BDD; Pruebas de carga con k6; ISO 25010',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s5.id, code: 'MOV-501' } },
-    update: { description: 'React Native y Flutter con APIs, notificaciones y publicación en tiendas' },
+    update: { description: 'React Native; Flutter; Integración con APIs; Publicación en tiendas' },
     create: {
       tenantId: tid, semesterId: isV1s5.id,
       name: 'Desarrollo de Aplicaciones Móviles', code: 'MOV-501',
       credits: 3, hoursTheory: 32,                hoursPractice: 16,
-      description: 'React Native y Flutter con APIs, notificaciones y publicación en tiendas',
+      description: 'React Native; Flutter; Integración con APIs; Publicación en tiendas',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s5.id, code: 'GPR-501' } },
-    update: { description: 'PMBOK, marcos ágiles escalados, OKRs y gestión de portafolio TI' },
+    update: { description: 'PMBOK y Scrum; SAFe escalado; OKRs y KPIs; Portafolio de proyectos TI' },
     create: {
       tenantId: tid, semesterId: isV1s5.id,
       name: 'Gestión de Proyectos TI',        code: 'GPR-501',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'PMBOK, marcos ágiles escalados, OKRs y gestión de portafolio TI',
+      description: 'PMBOK y Scrum; SAFe escalado; OKRs y KPIs; Portafolio de proyectos TI',
     },
   });
 
@@ -1291,67 +1291,67 @@ async function main(): Promise<void> {
 
   const isV1s6MSV = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s6.id, code: 'MSV-601' } },
-    update: { description: 'Descomposición en microservicios, service mesh, resiliencia y mensajería asíncrona' },
+    update: { description: 'Descomposición de servicios; Service mesh Istio; Resiliencia y circuit breakers; Kafka asíncrono' },
     create: {
       tenantId: tid, semesterId: isV1s6.id,
       name: 'Microservicios y Sistemas Distribuidos', code: 'MSV-601',
       credits: 4, hoursTheory: 48,                    hoursPractice: 16,
-      description: 'Descomposición en microservicios, service mesh, resiliencia y mensajería asíncrona',
+      description: 'Descomposición de servicios; Service mesh Istio; Resiliencia y circuit breakers; Kafka asíncrono',
     },
   });
 
   const isV1s6IAA = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s6.id, code: 'IAA-601' } },
-    update: { description: 'Fine-tuning de LLMs, RAG con bases vectoriales, agentes autónomos y MLOps' },
+    update: { description: 'Fine-tuning de LLMs; RAG con bases vectoriales; Agentes autónomos; MLOps' },
     create: {
       tenantId: tid, semesterId: isV1s6.id,
       name: 'IA Aplicada y LLMs',            code: 'IAA-601',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Fine-tuning de LLMs, RAG con bases vectoriales, agentes autónomos y MLOps',
+      description: 'Fine-tuning de LLMs; RAG con bases vectoriales; Agentes autónomos; MLOps',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s6.id, code: 'IOT-601' } },
-    update: { description: 'Microcontroladores, protocolos IoT, plataformas cloud y edge computing' },
+    update: { description: 'Microcontroladores ESP32; Protocolos MQTT/CoAP; Plataformas IoT cloud; Edge computing' },
     create: {
       tenantId: tid, semesterId: isV1s6.id,
       name: 'Sistemas Embebidos e IoT',       code: 'IOT-601',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Microcontroladores, protocolos IoT, plataformas cloud y edge computing',
+      description: 'Microcontroladores ESP32; Protocolos MQTT/CoAP; Plataformas IoT cloud; Edge computing',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s6.id, code: 'VJG-601' } },
-    update: { description: 'Videojuegos con Unity/Godot, gráficos 3D, física y experiencias AR/VR' },
+    update: { description: 'Unity y Godot; Gráficos 3D y shaders; Motor de física; Experiencias AR/VR' },
     create: {
       tenantId: tid, semesterId: isV1s6.id,
       name: 'Videojuegos y Gráficos Computacionales', code: 'VJG-601',
       credits: 3, hoursTheory: 32,                    hoursPractice: 16,
-      description: 'Videojuegos con Unity/Godot, gráficos 3D, física y experiencias AR/VR',
+      description: 'Unity y Godot; Gráficos 3D y shaders; Motor de física; Experiencias AR/VR',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s6.id, code: 'VRS-601' } },
-    update: { name: 'Usabilidad y Accesibilidad', description: 'Heurísticas Nielsen, evaluación con usuarios, WCAG 2.2 y métricas SUS/NPS' },
+    update: { name: 'Usabilidad y Accesibilidad', description: 'Heurísticas de Nielsen; Evaluación con usuarios; WCAG 2.2; Métricas SUS/NPS' },
     create: {
       tenantId: tid, semesterId: isV1s6.id,
       name: 'Usabilidad y Accesibilidad',             code: 'VRS-601',
       credits: 3, hoursTheory: 32,                   hoursPractice: 16,
-      description: 'Heurísticas Nielsen, evaluación con usuarios, WCAG 2.2 y métricas SUS/NPS',
+      description: 'Heurísticas de Nielsen; Evaluación con usuarios; WCAG 2.2; Métricas SUS/NPS',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s6.id, code: 'EL1-601' } },
-    update: { description: 'Computación cuántica, algoritmos de Shor/Grover y criptografía post-cuántica' },
+    update: { description: 'Qubits y superposición; Algoritmos de Shor/Grover; Criptografía cuántica; Post-quantum' },
     create: {
       tenantId: tid, semesterId: isV1s6.id,
       name: 'Computación Cuántica y Criptografía Avanzada', code: 'EL1-601',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Computación cuántica, algoritmos de Shor/Grover y criptografía post-cuántica',
+      description: 'Qubits y superposición; Algoritmos de Shor/Grover; Criptografía cuántica; Post-quantum',
     },
   });
 
@@ -1364,67 +1364,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s7.id, code: 'AGC-701' } },
-    update: { description: 'Gobierno de datos, GDPR, COBIT 2019, ISO 27001 y continuidad del negocio' },
+    update: { description: 'Gobierno de datos; GDPR y COBIT 2019; ISO 27001; Continuidad del negocio' },
     create: {
       tenantId: tid, semesterId: isV1s7.id,
       name: 'Auditoría, Gobernanza y Cumplimiento TI', code: 'AGC-701',
       credits: 3, hoursTheory: 48,                     hoursPractice: 0,
-      description: 'Gobierno de datos, GDPR, COBIT 2019, ISO 27001 y continuidad del negocio',
+      description: 'Gobierno de datos; GDPR y COBIT 2019; ISO 27001; Continuidad del negocio',
     },
   });
 
   const isV1s7RPA = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s7.id, code: 'RPA-701' } },
-    update: { description: 'RPA con UiPath, automatización inteligente con NLP/OCR y minería de procesos' },
+    update: { description: 'RPA con UiPath; Automatización con NLP/OCR; Minería de procesos; Hyperautomation' },
     create: {
       tenantId: tid, semesterId: isV1s7.id,
       name: 'Automatización Robótica de Procesos', code: 'RPA-701',
       credits: 3, hoursTheory: 32,                 hoursPractice: 16,
-      description: 'RPA con UiPath, automatización inteligente con NLP/OCR y minería de procesos',
+      description: 'RPA con UiPath; Automatización con NLP/OCR; Minería de procesos; Hyperautomation',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s7.id, code: 'GPE-701' } },
-    update: { description: 'Marca personal, Lean Startup, negociación, pitch y product-market fit' },
+    update: { description: 'Marca personal TI; Lean Startup; Negociación y pitch; Product-market fit' },
     create: {
       tenantId: tid, semesterId: isV1s7.id,
       name: 'Gestión Profesional y Emprendimiento', code: 'GPE-701',
       credits: 2, hoursTheory: 32,                  hoursPractice: 0,
-      description: 'Marca personal, Lean Startup, negociación, pitch y product-market fit',
+      description: 'Marca personal TI; Lean Startup; Negociación y pitch; Product-market fit',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s7.id, code: 'EEP-701' } },
-    update: { description: 'Ética en IA, códigos ACM/IEEE, green computing e inclusión digital' },
+    update: { description: 'Ética en IA; Códigos ACM/IEEE; Green computing; Inclusión digital' },
     create: {
       tenantId: tid, semesterId: isV1s7.id,
       name: 'Ética y Responsabilidad Profesional', code: 'EEP-701',
       credits: 2, hoursTheory: 32,                  hoursPractice: 0,
-      description: 'Ética en IA, códigos ACM/IEEE, green computing e inclusión digital',
+      description: 'Ética en IA; Códigos ACM/IEEE; Green computing; Inclusión digital',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s7.id, code: 'EL2-701' } },
-    update: { description: 'Blockchain, smart contracts con Solidity, DeFi, NFTs y Hyperledger Fabric' },
+    update: { description: 'Blockchain y Solidity; Smart contracts; DeFi y NFTs; Hyperledger Fabric' },
     create: {
       tenantId: tid, semesterId: isV1s7.id,
       name: 'Blockchain y Sistemas Descentralizados',      code: 'EL2-701',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Blockchain, smart contracts con Solidity, DeFi, NFTs y Hyperledger Fabric',
+      description: 'Blockchain y Solidity; Smart contracts; DeFi y NFTs; Hyperledger Fabric',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s7.id, code: 'PRC-701' } },
-    update: { description: 'Práctica profesional de 320 horas con informe y evaluación 360°' },
+    update: { description: 'Práctica de 320 horas; Informe técnico; Evaluación de desempeño; Portfolio profesional' },
     create: {
       tenantId: tid, semesterId: isV1s7.id,
       name: 'Práctica Profesional',           code: 'PRC-701',
       credits: 3, hoursTheory: 0,             hoursPractice: 48,
-      description: 'Práctica profesional de 320 horas con informe y evaluación 360°',
+      description: 'Práctica de 320 horas; Informe técnico; Evaluación de desempeño; Portfolio profesional',
     },
   });
 
@@ -1437,67 +1437,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s8.id, code: 'DTI-801' } },
-    update: { name: 'Integración de Sistemas', description: 'Integración empresarial: ESB, API Gateway, ETL/ELT y seguridad OAuth2/JWT' },
+    update: { name: 'Integración de Sistemas', description: 'ESB y API Gateway; ETL/ELT empresarial; Seguridad OAuth2/JWT; Patrones de integración' },
     create: {
       tenantId: tid, semesterId: isV1s8.id,
       name: 'Integración de Sistemas',          code: 'DTI-801',
       credits: 3, hoursTheory: 32,              hoursPractice: 16,
-      description: 'Integración empresarial: ESB, API Gateway, ETL/ELT y seguridad OAuth2/JWT',
+      description: 'ESB y API Gateway; ETL/ELT empresarial; Seguridad OAuth2/JWT; Patrones de integración',
     },
   });
 
   const isV1s8IMP = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s8.id, code: 'IMP-801' } },
-    update: { name: 'Trabajo de Titulación', description: 'Propuesta técnica, desarrollo iterativo, pruebas de aceptación y defensa oral' },
+    update: { name: 'Trabajo de Titulación', description: 'Propuesta técnica; Desarrollo iterativo; Pruebas de aceptación; Defensa oral' },
     create: {
       tenantId: tid, semesterId: isV1s8.id,
       name: 'Trabajo de Titulación',                    code: 'IMP-801',
       credits: 4, hoursTheory: 48,                       hoursPractice: 16,
-      description: 'Propuesta técnica, desarrollo iterativo, pruebas de aceptación y defensa oral',
+      description: 'Propuesta técnica; Desarrollo iterativo; Pruebas de aceptación; Defensa oral',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s8.id, code: 'DEF-801' } },
-    update: { name: 'Procesos de Software', description: 'Modelos de proceso, mejora CMMI, gestión de configuración y code reviews' },
+    update: { name: 'Procesos de Software', description: 'Modelos de proceso; Mejora CMMI; Gestión de configuración; Code reviews' },
     create: {
       tenantId: tid, semesterId: isV1s8.id,
       name: 'Procesos de Software',           code: 'DEF-801',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Modelos de proceso, mejora CMMI, gestión de configuración y code reviews',
+      description: 'Modelos de proceso; Mejora CMMI; Gestión de configuración; Code reviews',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s8.id, code: 'SEM-801' } },
-    update: { name: 'Auditoría Informática', description: 'Auditoría TI con COBIT 2019, controles internos y cumplimiento normativo' },
+    update: { name: 'Auditoría Informática', description: 'Auditoría TI con COBIT; Controles internos; Cumplimiento normativo; Gestión de riesgos' },
     create: {
       tenantId: tid, semesterId: isV1s8.id,
       name: 'Auditoría Informática',          code: 'SEM-801',
       credits: 2, hoursTheory: 32,            hoursPractice: 0,
-      description: 'Auditoría TI con COBIT 2019, controles internos y cumplimiento normativo',
+      description: 'Auditoría TI con COBIT; Controles internos; Cumplimiento normativo; Gestión de riesgos',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s8.id, code: 'POR-801' } },
-    update: { name: 'Profesionalismo en Informática', description: 'Ética ACM/IEEE, marca personal, liderazgo técnico y marco legal del software' },
+    update: { name: 'Profesionalismo en Informática', description: 'Ética ACM/IEEE; Marca personal; Liderazgo técnico; Marco legal del software' },
     create: {
       tenantId: tid, semesterId: isV1s8.id,
       name: 'Profesionalismo en Informática', code: 'POR-801',
       credits: 2, hoursTheory: 32,            hoursPractice: 0,
-      description: 'Ética ACM/IEEE, marca personal, liderazgo técnico y marco legal del software',
+      description: 'Ética ACM/IEEE; Marca personal; Liderazgo técnico; Marco legal del software',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV1s8.id, code: 'EMP-801' } },
-    update: { description: 'Design Thinking, Business Model Canvas, financiamiento y go-to-market' },
+    update: { description: 'Design Thinking; Business Model Canvas; Financiamiento startup; Go-to-market' },
     create: {
       tenantId: tid, semesterId: isV1s8.id,
       name: 'Emprendimiento Tecnológico',     code: 'EMP-801',
       credits: 2, hoursTheory: 32,            hoursPractice: 0,
-      description: 'Design Thinking, Business Model Canvas, financiamiento y go-to-market',
+      description: 'Design Thinking; Business Model Canvas; Financiamiento startup; Go-to-market',
     },
   });
 
@@ -1547,7 +1547,7 @@ async function main(): Promise<void> {
 
   const isV2 = await prisma.curriculum.upsert({
     where: { careerId_version: { careerId: careerIS.id, version: '2025-2' } },
-    update: {},
+    update: { description: 'Malla de 8 semestres con nomenclatura académica genérica (estilo politécnico)' },
     create: {
       tenantId: tid,
       careerId: careerIS.id,
@@ -1567,67 +1567,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s1.id, code: 'ALG-101' } },
-    update: { description: 'Espacios vectoriales, matrices, transformaciones lineales y valores propios' },
+    update: { description: 'Espacios vectoriales; Matrices y determinantes; Transformaciones lineales; Valores propios' },
     create: {
       tenantId: tid, semesterId: isV2s1.id,
       name: 'Álgebra Lineal',               code: 'ALG-101',
       credits: 3, hoursTheory: 32,          hoursPractice: 16,
-      description: 'Espacios vectoriales, matrices, transformaciones lineales y valores propios',
+      description: 'Espacios vectoriales; Matrices y determinantes; Transformaciones lineales; Valores propios',
     },
   });
 
   const isV2s1PRG = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s1.id, code: 'PRG-101' } },
-    update: { description: 'Algoritmos, variables, estructuras de control y subprogramas básicos' },
+    update: { description: 'Algoritmos y variables; Estructuras de control; Subprogramas; Python introductorio' },
     create: {
       tenantId: tid, semesterId: isV2s1.id,
       name: 'Programación I',               code: 'PRG-101',
       credits: 4, hoursTheory: 48,          hoursPractice: 16,
-      description: 'Algoritmos, variables, estructuras de control y subprogramas básicos',
+      description: 'Algoritmos y variables; Estructuras de control; Subprogramas; Python introductorio',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s1.id, code: 'SOP-101' } },
-    update: { description: 'Procesos, memoria, archivos, permisos y virtualización en sistemas operativos' },
+    update: { description: 'Gestión de procesos; Memoria y archivos; Permisos del sistema; Virtualización' },
     create: {
       tenantId: tid, semesterId: isV2s1.id,
       name: 'Sistemas Operativos',          code: 'SOP-101',
       credits: 3, hoursTheory: 32,          hoursPractice: 16,
-      description: 'Procesos, memoria, archivos, permisos y virtualización en sistemas operativos',
+      description: 'Gestión de procesos; Memoria y archivos; Permisos del sistema; Virtualización',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s1.id, code: 'INC-101' } },
-    update: { description: 'Historia de la computación, representación de datos, terminal y Git' },
+    update: { description: 'Historia de la computación; Representación de datos; Terminal Linux; Git básico' },
     create: {
       tenantId: tid, semesterId: isV2s1.id,
       name: 'Introducción a la Computación', code: 'INC-101',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Historia de la computación, representación de datos, terminal y Git',
+      description: 'Historia de la computación; Representación de datos; Terminal Linux; Git básico',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s1.id, code: 'COE-101' } },
-    update: { description: 'Escritura académica, oratoria, comunicación asertiva y documentación' },
+    update: { description: 'Escritura académica; Oratoria y presentaciones; Comunicación asertiva; Documentación' },
     create: {
       tenantId: tid, semesterId: isV2s1.id,
       name: 'Comunicación Oral y Escrita',   code: 'COE-101',
       credits: 2, hoursTheory: 32,           hoursPractice: 0,
-      description: 'Escritura académica, oratoria, comunicación asertiva y documentación',
+      description: 'Escritura académica; Oratoria y presentaciones; Comunicación asertiva; Documentación',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s1.id, code: 'STE-101' } },
-    update: { description: 'Impacto social de la tecnología, modelos de negocio y ética profesional' },
+    update: { description: 'Impacto social TI; Modelos de negocio; Ética profesional; Responsabilidad digital' },
     create: {
       tenantId: tid, semesterId: isV2s1.id,
       name: 'Sociedad, Tecnología y Empresa', code: 'STE-101',
       credits: 2, hoursTheory: 32,            hoursPractice: 0,
-      description: 'Impacto social de la tecnología, modelos de negocio y ética profesional',
+      description: 'Impacto social TI; Modelos de negocio; Ética profesional; Responsabilidad digital',
     },
   });
 
@@ -1640,67 +1640,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s2.id, code: 'MAD-201' } },
-    update: { description: 'Lógica proposicional, conjuntos, grafos y probabilidad discreta' },
+    update: { description: 'Lógica proposicional; Conjuntos y relaciones; Grafos y árboles; Probabilidad discreta' },
     create: {
       tenantId: tid, semesterId: isV2s2.id,
       name: 'Matemáticas Discretas',         code: 'MAD-201',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Lógica proposicional, conjuntos, grafos y probabilidad discreta',
+      description: 'Lógica proposicional; Conjuntos y relaciones; Grafos y árboles; Probabilidad discreta',
     },
   });
 
   const isV2s2EDA = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s2.id, code: 'EDA-201' } },
-    update: { description: 'Estructuras de datos, modelado relacional, SQL y algoritmos de búsqueda' },
+    update: { description: 'Estructuras de datos; Modelado relacional; SQL y normalización; Algoritmos de búsqueda' },
     create: {
       tenantId: tid, semesterId: isV2s2.id,
       name: 'Bases de Datos I',                code: 'EDA-201',
       credits: 4, hoursTheory: 48,              hoursPractice: 16,
-      description: 'Estructuras de datos, modelado relacional, SQL y algoritmos de búsqueda',
+      description: 'Estructuras de datos; Modelado relacional; SQL y normalización; Algoritmos de búsqueda',
     },
   });
 
   const isV2s2PRG2 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s2.id, code: 'PRG-201' } },
-    update: { description: 'POO: herencia, polimorfismo, patrones GoF y pruebas unitarias' },
+    update: { description: 'Programación orientada a objetos; Herencia y polimorfismo; Patrones GoF; Pruebas unitarias' },
     create: {
       tenantId: tid, semesterId: isV2s2.id,
       name: 'Programación II',               code: 'PRG-201',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'POO: herencia, polimorfismo, patrones GoF y pruebas unitarias',
+      description: 'Programación orientada a objetos; Herencia y polimorfismo; Patrones GoF; Pruebas unitarias',
     },
   });
 
   const isV2s2IAI1 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s2.id, code: 'IAI-201' } },
-    update: { description: 'Agentes inteligentes, búsqueda informada, sistemas expertos y planificación' },
+    update: { description: 'Agentes inteligentes; Búsqueda informada; Sistemas expertos; Planificación automática' },
     create: {
       tenantId: tid, semesterId: isV2s2.id,
       name: 'Inteligencia Artificial I',     code: 'IAI-201',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Agentes inteligentes, búsqueda informada, sistemas expertos y planificación',
+      description: 'Agentes inteligentes; Búsqueda informada; Sistemas expertos; Planificación automática',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s2.id, code: 'ISW-201' } },
-    update: { description: 'Ciclo de vida, Scrum/Kanban, CI/CD y control de versiones' },
+    update: { description: 'Ciclo de vida del software; Scrum y Kanban; CI/CD básico; Control de versiones' },
     create: {
       tenantId: tid, semesterId: isV2s2.id,
       name: 'Ingeniería de Software I',      code: 'ISW-201',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Ciclo de vida, Scrum/Kanban, CI/CD y control de versiones',
+      description: 'Ciclo de vida del software; Scrum y Kanban; CI/CD básico; Control de versiones',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s2.id, code: 'FRE-201' } },
-    update: { description: 'Modelo OSI, TCP/IP, direccionamiento IP y servicios HTTP/S y DNS' },
+    update: { description: 'Modelo OSI y TCP/IP; Direccionamiento IP; HTTP/S y DNS; Servicios de red' },
     create: {
       tenantId: tid, semesterId: isV2s2.id,
       name: 'Fundamentos de Redes',          code: 'FRE-201',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Modelo OSI, TCP/IP, direccionamiento IP y servicios HTTP/S y DNS',
+      description: 'Modelo OSI y TCP/IP; Direccionamiento IP; HTTP/S y DNS; Servicios de red',
     },
   });
 
@@ -1713,67 +1713,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s3.id, code: 'CDI-301' } },
-    update: { description: 'Límites, derivadas, integrales, optimización y series de Taylor' },
+    update: { description: 'Límites y continuidad; Derivadas y optimización; Integrales definidas; Series de Taylor' },
     create: {
       tenantId: tid, semesterId: isV2s3.id,
       name: 'Cálculo Diferencial e Integral', code: 'CDI-301',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Límites, derivadas, integrales, optimización y series de Taylor',
+      description: 'Límites y continuidad; Derivadas y optimización; Integrales definidas; Series de Taylor',
     },
   });
 
   const isV2s3BD1 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s3.id, code: 'BDI-301' } },
-    update: { description: 'MongoDB, Redis, Cassandra, teorema CAP y selección NoSQL' },
+    update: { description: 'MongoDB y Redis; Cassandra columnar; Teorema CAP; Criterios NoSQL vs SQL' },
     create: {
       tenantId: tid, semesterId: isV2s3.id,
       name: 'Bases de Datos II',             code: 'BDI-301',
       credits: 3, hoursTheory: 48,           hoursPractice: 0,
-      description: 'MongoDB, Redis, Cassandra, teorema CAP y selección NoSQL',
+      description: 'MongoDB y Redis; Cassandra columnar; Teorema CAP; Criterios NoSQL vs SQL',
     },
   });
 
   const isV2s3PRG3 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s3.id, code: 'PRG-301' } },
-    update: { description: 'APIs REST, ORM, JWT/OAuth2 y autorización por roles' },
+    update: { description: 'APIs REST; ORM con Prisma; JWT/OAuth2; Autorización por roles' },
     create: {
       tenantId: tid, semesterId: isV2s3.id,
       name: 'Programación III',              code: 'PRG-301',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'APIs REST, ORM, JWT/OAuth2 y autorización por roles',
+      description: 'APIs REST; ORM con Prisma; JWT/OAuth2; Autorización por roles',
     },
   });
 
   const isV2s3IUS = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s3.id, code: 'IUS-301' } },
-    update: { description: 'Interfaces modernas, accesibilidad WCAG, Figma y pruebas de usabilidad' },
+    update: { description: 'Interfaces modernas; Accesibilidad WCAG; Prototipado en Figma; Pruebas de usabilidad' },
     create: {
       tenantId: tid, semesterId: isV2s3.id,
       name: 'Interfaces de Usuario',         code: 'IUS-301',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'Interfaces modernas, accesibilidad WCAG, Figma y pruebas de usabilidad',
+      description: 'Interfaces modernas; Accesibilidad WCAG; Prototipado en Figma; Pruebas de usabilidad',
     },
   });
 
   const isV2s3IAI2 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s3.id, code: 'IAI-301' } },
-    update: { description: 'Aprendizaje supervisado, clustering, validación cruzada y métricas' },
+    update: { description: 'Aprendizaje supervisado; Clustering y reducción; Validación cruzada; Métricas de evaluación' },
     create: {
       tenantId: tid, semesterId: isV2s3.id,
       name: 'Inteligencia Artificial II',    code: 'IAI-301',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'Aprendizaje supervisado, clustering, validación cruzada y métricas',
+      description: 'Aprendizaje supervisado; Clustering y reducción; Validación cruzada; Métricas de evaluación',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s3.id, code: 'SEI-301' } },
-    update: { description: 'Criptografía, OWASP Top 10, auditoría de código e ISO 27001' },
+    update: { description: 'Criptografía aplicada; OWASP Top 10; Auditoría de código; ISO 27001' },
     create: {
       tenantId: tid, semesterId: isV2s3.id,
       name: 'Seguridad Informática',         code: 'SEI-301',
       credits: 3, hoursTheory: 48,           hoursPractice: 0,
-      description: 'Criptografía, OWASP Top 10, auditoría de código e ISO 27001',
+      description: 'Criptografía aplicada; OWASP Top 10; Auditoría de código; ISO 27001',
     },
   });
 
@@ -1786,67 +1786,67 @@ async function main(): Promise<void> {
 
   const isV2s4BD2 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s4.id, code: 'BDI-401' } },
-    update: { description: 'Hadoop, Spark, Kafka, Data Lakes y arquitecturas Lambda/Kappa' },
+    update: { description: 'Hadoop y Spark; Apache Kafka; Data Lakes; Arquitecturas Lambda/Kappa' },
     create: {
       tenantId: tid, semesterId: isV2s4.id,
       name: 'Bases de Datos III',            code: 'BDI-401',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'Hadoop, Spark, Kafka, Data Lakes y arquitecturas Lambda/Kappa',
+      description: 'Hadoop y Spark; Apache Kafka; Data Lakes; Arquitecturas Lambda/Kappa',
     },
   });
 
   const isV2s4PRG4 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s4.id, code: 'PRG-401' } },
-    update: { description: 'Full-stack avanzado, GraphQL, WebSockets y optimización de rendimiento' },
+    update: { description: 'Full-stack avanzado; GraphQL; WebSockets; Optimización de rendimiento' },
     create: {
       tenantId: tid, semesterId: isV2s4.id,
       name: 'Programación IV',               code: 'PRG-401',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'Full-stack avanzado, GraphQL, WebSockets y optimización de rendimiento',
+      description: 'Full-stack avanzado; GraphQL; WebSockets; Optimización de rendimiento',
     },
   });
 
   const isV2s4IAI3 = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s4.id, code: 'IAI-401' } },
-    update: { description: 'CNNs, Transformers, modelos generativos y despliegue en producción' },
+    update: { description: 'CNNs y visión por computadora; Transformers; Modelos generativos; Despliegue en producción' },
     create: {
       tenantId: tid, semesterId: isV2s4.id,
       name: 'Inteligencia Artificial III',   code: 'IAI-401',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'CNNs, Transformers, modelos generativos y despliegue en producción',
+      description: 'CNNs y visión por computadora; Transformers; Modelos generativos; Despliegue en producción',
     },
   });
 
   const isV2s4DIS = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s4.id, code: 'DIS-401' } },
-    update: { description: 'Investigación de usuarios, sistemas de diseño y métricas UX' },
+    update: { description: 'Investigación de usuarios; Sistemas de diseño; Prototipado avanzado; Métricas UX' },
     create: {
       tenantId: tid, semesterId: isV2s4.id,
       name: 'Diseño de Interacción',         code: 'DIS-401',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Investigación de usuarios, sistemas de diseño y métricas UX',
+      description: 'Investigación de usuarios; Sistemas de diseño; Prototipado avanzado; Métricas UX',
     },
   });
 
   const isV2s4OPS = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s4.id, code: 'OPS-401' } },
-    update: { description: 'CI/CD, Docker, blue-green/canary releases y monitoreo de pipelines' },
+    update: { description: 'CI/CD en profundidad; Docker y contenedores; Blue-green y canary; Monitoreo de pipelines' },
     create: {
       tenantId: tid, semesterId: isV2s4.id,
       name: 'Operaciones y Despliegue',      code: 'OPS-401',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'CI/CD, Docker, blue-green/canary releases y monitoreo de pipelines',
+      description: 'CI/CD en profundidad; Docker y contenedores; Blue-green y canary; Monitoreo de pipelines',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s4.id, code: 'ISW-401' } },
-    update: { description: 'Diseño UML, requisitos, estimación y métricas de calidad del software' },
+    update: { description: 'Diseño con UML; Gestión de requisitos; Estimación de esfuerzo; Métricas de calidad' },
     create: {
       tenantId: tid, semesterId: isV2s4.id,
       name: 'Ingeniería de Software II',     code: 'ISW-401',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Diseño UML, requisitos, estimación y métricas de calidad del software',
+      description: 'Diseño con UML; Gestión de requisitos; Estimación de esfuerzo; Métricas de calidad',
     },
   });
 
@@ -1859,67 +1859,67 @@ async function main(): Promise<void> {
 
   const isV2s5ARQ = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s5.id, code: 'ARQ-501' } },
-    update: { description: 'Microservicios, DDD, CQRS, Event Sourcing y observabilidad con ELK' },
+    update: { description: 'Microservicios y DDD; CQRS y Event Sourcing; Patrones de arquitectura; Observabilidad ELK' },
     create: {
       tenantId: tid, semesterId: isV2s5.id,
       name: 'Arquitectura de Software',      code: 'ARQ-501',
       credits: 4, hoursTheory: 48,           hoursPractice: 16,
-      description: 'Microservicios, DDD, CQRS, Event Sourcing y observabilidad con ELK',
+      description: 'Microservicios y DDD; CQRS y Event Sourcing; Patrones de arquitectura; Observabilidad ELK',
     },
   });
 
   const isV2s5CLD = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s5.id, code: 'CLD-501' } },
-    update: { description: 'AWS/GCP/Azure, Kubernetes, Terraform, GitOps y escalado cloud' },
+    update: { description: 'AWS, GCP y Azure; Kubernetes; Terraform IaC; GitOps y escalado cloud' },
     create: {
       tenantId: tid, semesterId: isV2s5.id,
       name: 'Computación en la Nube',        code: 'CLD-501',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'AWS/GCP/Azure, Kubernetes, Terraform, GitOps y escalado cloud',
+      description: 'AWS, GCP y Azure; Kubernetes; Terraform IaC; GitOps y escalado cloud',
     },
   });
 
   const isV2s5INF = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s5.id, code: 'INF-501' } },
-    update: { description: 'Data Warehouses, ETL/ELT con dbt, dashboards y análisis de cohortes' },
+    update: { description: 'Data Warehouses; ETL/ELT con dbt; Dashboards de negocio; Análisis de cohortes' },
     create: {
       tenantId: tid, semesterId: isV2s5.id,
       name: 'Inteligencia de Negocios',      code: 'INF-501',
       credits: 3, hoursTheory: 48,           hoursPractice: 0,
-      description: 'Data Warehouses, ETL/ELT con dbt, dashboards y análisis de cohortes',
+      description: 'Data Warehouses; ETL/ELT con dbt; Dashboards de negocio; Análisis de cohortes',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s5.id, code: 'ISW-501' } },
-    update: { description: 'Métricas, TDD/BDD, pruebas de rendimiento con k6 y modelos CMMI' },
+    update: { description: 'Métricas de calidad; TDD y BDD; Pruebas de rendimiento con k6; Modelos CMMI' },
     create: {
       tenantId: tid, semesterId: isV2s5.id,
       name: 'Ingeniería de Software III',    code: 'ISW-501',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Métricas, TDD/BDD, pruebas de rendimiento con k6 y modelos CMMI',
+      description: 'Métricas de calidad; TDD y BDD; Pruebas de rendimiento con k6; Modelos CMMI',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s5.id, code: 'MOV-501' } },
-    update: { description: 'React Native o Flutter con APIs, notificaciones y publicación en tiendas' },
+    update: { description: 'React Native; Flutter; APIs móviles; Publicación en App Store/Play Store' },
     create: {
       tenantId: tid, semesterId: isV2s5.id,
       name: 'Desarrollo Móvil',              code: 'MOV-501',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'React Native o Flutter con APIs, notificaciones y publicación en tiendas',
+      description: 'React Native; Flutter; APIs móviles; Publicación en App Store/Play Store',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s5.id, code: 'CAL-501' } },
-    update: { description: 'Estrategias de pruebas, E2E con Playwright, análisis estático e ISO 25010' },
+    update: { description: 'Estrategias de pruebas; E2E con Playwright; Análisis estático; ISO 25010' },
     create: {
       tenantId: tid, semesterId: isV2s5.id,
       name: 'Calidad del Software',          code: 'CAL-501',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Estrategias de pruebas, E2E con Playwright, análisis estático e ISO 25010',
+      description: 'Estrategias de pruebas; E2E con Playwright; Análisis estático; ISO 25010',
     },
   });
 
@@ -1932,67 +1932,67 @@ async function main(): Promise<void> {
 
   const isV2s6MSV = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s6.id, code: 'MSV-601' } },
-    update: { description: 'Microservicios con DDD, service mesh Istio, resiliencia, gRPC y Kafka' },
+    update: { description: 'Microservicios con DDD; Service mesh Istio; Resiliencia y gRPC; Kafka asíncrono' },
     create: {
       tenantId: tid, semesterId: isV2s6.id,
       name: 'Sistemas Distribuidos y Microservicios', code: 'MSV-601',
       credits: 4, hoursTheory: 48,                    hoursPractice: 16,
-      description: 'Microservicios con DDD, service mesh Istio, resiliencia, gRPC y Kafka',
+      description: 'Microservicios con DDD; Service mesh Istio; Resiliencia y gRPC; Kafka asíncrono',
     },
   });
 
   const isV2s6IAP = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s6.id, code: 'IAP-601' } },
-    update: { description: 'Fine-tuning de LLMs, RAG vectorial, agentes LangChain y MLOps' },
+    update: { description: 'Fine-tuning de LLMs; RAG vectorial; Agentes LangChain; MLOps' },
     create: {
       tenantId: tid, semesterId: isV2s6.id,
       name: 'Aplicaciones de Inteligencia Artificial', code: 'IAP-601',
       credits: 3, hoursTheory: 32,                     hoursPractice: 16,
-      description: 'Fine-tuning de LLMs, RAG vectorial, agentes LangChain y MLOps',
+      description: 'Fine-tuning de LLMs; RAG vectorial; Agentes LangChain; MLOps',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s6.id, code: 'SIE-601' } },
-    update: { description: 'Microcontroladores, protocolos IoT, plataformas cloud y edge computing' },
+    update: { description: 'Microcontroladores ESP32; Protocolos MQTT/CoAP; Plataformas IoT cloud; Edge computing' },
     create: {
       tenantId: tid, semesterId: isV2s6.id,
       name: 'Sistemas Embebidos e IoT',       code: 'SIE-601',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Microcontroladores, protocolos IoT, plataformas cloud y edge computing',
+      description: 'Microcontroladores ESP32; Protocolos MQTT/CoAP; Plataformas IoT cloud; Edge computing',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s6.id, code: 'TEW-601' } },
-    update: { description: 'Web Components, PWA, WebAssembly y dApps con Web3' },
+    update: { description: 'Web Components; PWA offline; WebAssembly; dApps con Web3' },
     create: {
       tenantId: tid, semesterId: isV2s6.id,
       name: 'Tecnologías Web Emergentes',     code: 'TEW-601',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Web Components, PWA, WebAssembly y dApps con Web3',
+      description: 'Web Components; PWA offline; WebAssembly; dApps con Web3',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s6.id, code: 'VER-601' } },
-    update: { name: 'Usabilidad y Accesibilidad', description: 'Heurísticas Nielsen, evaluación con usuarios, WCAG 2.2 y métricas SUS/NPS' },
+    update: { name: 'Usabilidad y Accesibilidad', description: 'Heurísticas de Nielsen; Evaluación con usuarios; WCAG 2.2; Métricas SUS/NPS' },
     create: {
       tenantId: tid, semesterId: isV2s6.id,
       name: 'Usabilidad y Accesibilidad',            code: 'VER-601',
       credits: 3, hoursTheory: 32,                   hoursPractice: 16,
-      description: 'Heurísticas Nielsen, evaluación con usuarios, WCAG 2.2 y métricas SUS/NPS',
+      description: 'Heurísticas de Nielsen; Evaluación con usuarios; WCAG 2.2; Métricas SUS/NPS',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s6.id, code: 'ELT-601' } },
-    update: { description: 'Tópicos avanzados: ciberseguridad, computación cuántica y robótica con IA' },
+    update: { description: 'Ciberseguridad avanzada; Computación cuántica; Robótica con IA; Tópicos emergentes' },
     create: {
       tenantId: tid, semesterId: isV2s6.id,
       name: 'Tópicos Avanzados en Ciencias de la Computación', code: 'ELT-601',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Tópicos avanzados: ciberseguridad, computación cuántica y robótica con IA',
+      description: 'Ciberseguridad avanzada; Computación cuántica; Robótica con IA; Tópicos emergentes',
     },
   });
 
@@ -2005,67 +2005,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s7.id, code: 'GIT-701' } },
-    update: { description: 'Gobierno de datos, GDPR, COBIT 2019, ISO 27001 y planes de continuidad' },
+    update: { description: 'Gobierno de datos; GDPR y COBIT 2019; ISO 27001; Planes de continuidad' },
     create: {
       tenantId: tid, semesterId: isV2s7.id,
       name: 'Gobierno de TI y Cumplimiento', code: 'GIT-701',
       credits: 3, hoursTheory: 48,           hoursPractice: 0,
-      description: 'Gobierno de datos, GDPR, COBIT 2019, ISO 27001 y planes de continuidad',
+      description: 'Gobierno de datos; GDPR y COBIT 2019; ISO 27001; Planes de continuidad',
     },
   });
 
   const isV2s7AUT = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s7.id, code: 'AUT-701' } },
-    update: { description: 'RPA con UiPath, IA en automatización, minería de procesos y hyperautomation' },
+    update: { description: 'RPA con UiPath; IA en automatización; Minería de procesos; Hyperautomation' },
     create: {
       tenantId: tid, semesterId: isV2s7.id,
       name: 'Automatización de Procesos',    code: 'AUT-701',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'RPA con UiPath, IA en automatización, minería de procesos y hyperautomation',
+      description: 'RPA con UiPath; IA en automatización; Minería de procesos; Hyperautomation',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s7.id, code: 'GEP-701' } },
-    update: { description: 'Modelos SaaS, presupuestos TI, contratos y estrategia de crecimiento' },
+    update: { description: 'Modelos SaaS; Presupuestos TI; Contratos y negociación; Estrategia de crecimiento' },
     create: {
       tenantId: tid, semesterId: isV2s7.id,
       name: 'Gestión de Empresas de Software', code: 'GEP-701',
       credits: 2, hoursTheory: 32,              hoursPractice: 0,
-      description: 'Modelos SaaS, presupuestos TI, contratos y estrategia de crecimiento',
+      description: 'Modelos SaaS; Presupuestos TI; Contratos y negociación; Estrategia de crecimiento',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s7.id, code: 'ETS-701' } },
-    update: { description: 'Ética en IA, códigos ACM/IEEE, green computing e inclusión digital' },
+    update: { description: 'Ética en IA; Códigos ACM/IEEE; Green computing; Inclusión digital' },
     create: {
       tenantId: tid, semesterId: isV2s7.id,
       name: 'Ética en Tecnología y Sociedad', code: 'ETS-701',
       credits: 2, hoursTheory: 32,            hoursPractice: 0,
-      description: 'Ética en IA, códigos ACM/IEEE, green computing e inclusión digital',
+      description: 'Ética en IA; Códigos ACM/IEEE; Green computing; Inclusión digital',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s7.id, code: 'ELT2-701' } },
-    update: { description: 'Tópicos especializados: seguridad ofensiva, SaaS multi-tenant o XR' },
+    update: { description: 'Seguridad ofensiva; SaaS multi-tenant; Realidad extendida XR; Tópicos avanzados' },
     create: {
       tenantId: tid, semesterId: isV2s7.id,
       name: 'Seguridad Ofensiva y Plataformas Especializadas', code: 'ELT2-701',
       credits: 3, hoursTheory: 32,           hoursPractice: 16,
-      description: 'Tópicos especializados: seguridad ofensiva, SaaS multi-tenant o XR',
+      description: 'Seguridad ofensiva; SaaS multi-tenant; Realidad extendida XR; Tópicos avanzados',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s7.id, code: 'PPR-701' } },
-    update: { description: 'Práctica preprofesional de 320 horas con informe y evaluación 360°' },
+    update: { description: 'Práctica de 320 horas; Informe técnico; Evaluación 360°; Portfolio profesional' },
     create: {
       tenantId: tid, semesterId: isV2s7.id,
       name: 'Práctica Preprofesional',       code: 'PPR-701',
       credits: 3, hoursTheory: 0,            hoursPractice: 48,
-      description: 'Práctica preprofesional de 320 horas con informe y evaluación 360°',
+      description: 'Práctica de 320 horas; Informe técnico; Evaluación 360°; Portfolio profesional',
     },
   });
 
@@ -2078,67 +2078,67 @@ async function main(): Promise<void> {
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s8.id, code: 'DTT-801' } },
-    update: { name: 'Integración de Sistemas', description: 'Integración empresarial: ESB, API Gateway, ETL/ELT y seguridad OAuth2/JWT' },
+    update: { name: 'Integración de Sistemas', description: 'ESB y API Gateway; ETL/ELT empresarial; Seguridad OAuth2/JWT; Patrones de integración' },
     create: {
       tenantId: tid, semesterId: isV2s8.id,
       name: 'Integración de Sistemas',          code: 'DTT-801',
       credits: 3, hoursTheory: 32,              hoursPractice: 16,
-      description: 'Integración empresarial: ESB, API Gateway, ETL/ELT y seguridad OAuth2/JWT',
+      description: 'ESB y API Gateway; ETL/ELT empresarial; Seguridad OAuth2/JWT; Patrones de integración',
     },
   });
 
   const isV2s8ITT = await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s8.id, code: 'ITT-801' } },
-    update: { name: 'Trabajo de Titulación', description: 'Propuesta técnica, desarrollo iterativo, pruebas de aceptación y defensa oral' },
+    update: { name: 'Trabajo de Titulación', description: 'Propuesta técnica; Desarrollo iterativo; Pruebas de aceptación; Defensa oral' },
     create: {
       tenantId: tid, semesterId: isV2s8.id,
       name: 'Trabajo de Titulación',                    code: 'ITT-801',
       credits: 4, hoursTheory: 48,                       hoursPractice: 16,
-      description: 'Propuesta técnica, desarrollo iterativo, pruebas de aceptación y defensa oral',
+      description: 'Propuesta técnica; Desarrollo iterativo; Pruebas de aceptación; Defensa oral',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s8.id, code: 'DTD-801' } },
-    update: { name: 'Procesos de Software', description: 'Modelos de proceso, mejora CMMI, gestión de configuración y code reviews' },
+    update: { name: 'Procesos de Software', description: 'Modelos de proceso; Mejora CMMI; Gestión de configuración; Code reviews' },
     create: {
       tenantId: tid, semesterId: isV2s8.id,
       name: 'Procesos de Software',           code: 'DTD-801',
       credits: 3, hoursTheory: 32,            hoursPractice: 16,
-      description: 'Modelos de proceso, mejora CMMI, gestión de configuración y code reviews',
+      description: 'Modelos de proceso; Mejora CMMI; Gestión de configuración; Code reviews',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s8.id, code: 'SIN-801' } },
-    update: { name: 'Auditoría Informática', description: 'Auditoría TI con COBIT 2019, controles internos y cumplimiento normativo' },
+    update: { name: 'Auditoría Informática', description: 'Auditoría TI con COBIT; Controles internos; Cumplimiento normativo; Gestión de riesgos' },
     create: {
       tenantId: tid, semesterId: isV2s8.id,
       name: 'Auditoría Informática',         code: 'SIN-801',
       credits: 2, hoursTheory: 32,           hoursPractice: 0,
-      description: 'Auditoría TI con COBIT 2019, controles internos y cumplimiento normativo',
+      description: 'Auditoría TI con COBIT; Controles internos; Cumplimiento normativo; Gestión de riesgos',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s8.id, code: 'POR-801' } },
-    update: { name: 'Profesionalismo en Informática', description: 'Ética ACM/IEEE, marca personal, liderazgo técnico y marco legal del software' },
+    update: { name: 'Profesionalismo en Informática', description: 'Ética ACM/IEEE; Marca personal; Liderazgo técnico; Marco legal del software' },
     create: {
       tenantId: tid, semesterId: isV2s8.id,
       name: 'Profesionalismo en Informática',code: 'POR-801',
       credits: 2, hoursTheory: 32,           hoursPractice: 0,
-      description: 'Ética ACM/IEEE, marca personal, liderazgo técnico y marco legal del software',
+      description: 'Ética ACM/IEEE; Marca personal; Liderazgo técnico; Marco legal del software',
     },
   });
 
   await prisma.subject.upsert({
     where: { semesterId_code: { semesterId: isV2s8.id, code: 'ETI-801' } },
-    update: { description: 'Design Thinking, Business Model Canvas, financiamiento y go-to-market' },
+    update: { description: 'Design Thinking; Business Model Canvas; Financiamiento startup; Go-to-market' },
     create: {
       tenantId: tid, semesterId: isV2s8.id,
       name: 'Emprendimiento e Innovación',   code: 'ETI-801',
       credits: 2, hoursTheory: 32,           hoursPractice: 0,
-      description: 'Design Thinking, Business Model Canvas, financiamiento y go-to-market',
+      description: 'Design Thinking; Business Model Canvas; Financiamiento startup; Go-to-market',
     },
   });
 
