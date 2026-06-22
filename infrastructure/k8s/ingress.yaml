@@ -1,0 +1,38 @@
+# Requires: nginx ingress controller (kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml)
+# Replace HOST with your actual domain (e.g. app.pensumcloud.com)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pensum-ingress
+  namespace: pensum-cloud
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    # cert-manager TLS (uncomment when cert-manager is installed):
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  # tls:
+  #   - hosts:
+  #       - YOUR_HOST
+  #     secretName: pensum-tls
+  rules:
+    - host: YOUR_HOST
+      http:
+        paths:
+          # Backend API — must come first (more specific prefix)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: pensum-backend
+                port:
+                  number: 3000
+          # Frontend SPA — catch-all
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pensum-frontend
+                port:
+                  number: 80

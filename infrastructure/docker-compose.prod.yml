@@ -1,0 +1,48 @@
+# =============================================================================
+# Pensum Cloud — Prod override
+#
+# Uso en servidor:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Requiere variables en infrastructure/.env (o exportadas en el shell):
+#   POSTGRES_PASSWORD, JWT_SECRET, JWT_REFRESH_SECRET
+# =============================================================================
+
+services:
+
+  # ── Backend (producción — imagen compilada) ─────────────────────────────────
+  backend:
+    build:
+      context: ..
+      dockerfile: apps/backend/Dockerfile
+      target: production
+    container_name: pensum_backend
+    restart: unless-stopped
+    env_file:
+      - ../apps/backend/.env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-pensum_cloud}?schema=public
+    ports:
+      - '${BACKEND_PORT:-3000}:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pensum_network
+    # Sin debug port ni volume mounts en producción
+
+  # ── Frontend (nginx con assets compilados) ──────────────────────────────────
+  frontend:
+    build:
+      context: ..
+      dockerfile: apps/frontend/Dockerfile
+      target: production
+    container_name: pensum_frontend
+    restart: unless-stopped
+    ports:
+      - '${FRONTEND_PORT:-80}:80'
+    depends_on:
+      - backend
+    networks:
+      - pensum_network

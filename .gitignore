@@ -1,0 +1,59 @@
+# ──────────────────────────────────────────────────
+# Node / pnpm
+# ──────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+.pnpm-debug.log
+
+# ──────────────────────────────────────────────────
+# Build outputs
+# ──────────────────────────────────────────────────
+dist/
+build/
+.turbo/
+coverage/
+
+# ──────────────────────────────────────────────────
+# Prisma (cliente generado)
+# ──────────────────────────────────────────────────
+apps/backend/src/generated/
+
+# ──────────────────────────────────────────────────
+# Environment — NUNCA commitear .env con secretos
+# Los .env.example SÍ se commitean (sin valores reales)
+# ──────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+apps/backend/.env
+apps/frontend/.env
+infrastructure/.env
+
+# ──────────────────────────────────────────────────
+# Editors / OS
+# ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+
+# VSCode — solo commitear settings.json y launch.json
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ──────────────────────────────────────────────────
+# Logs
+# ──────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+
+# ──────────────────────────────────────────────────
+# Misc
+# ──────────────────────────────────────────────────
+.cache/
+tmp/

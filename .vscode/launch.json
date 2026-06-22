@@ -1,0 +1,76 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // ── Opción 1: Attach al container Docker (recomendado) ─────────────────────
+    // Requiere: docker compose up (que expone puerto 9229)
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "🐛 Docker — Attach Backend",
+      "address": "localhost",
+      "port": 9229,
+      "localRoot": "${workspaceFolder}/apps/backend/src",
+      "remoteRoot": "/app/apps/backend/src",
+      "restart": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "sourceMaps": true,
+      "presentation": {
+        "group": "Docker",
+        "order": 1
+      }
+    },
+
+    // ── Opción 2: Lanzar backend en local (sin Docker) ─────────────────────────
+    // Requiere: postgres corriendo (docker compose up postgres)
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🚀 Local — Launch Backend (debug)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "./apps/backend", "start:debug"],
+      "cwd": "${workspaceFolder}",
+      "restart": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "envFile": "${workspaceFolder}/apps/backend/.env",
+      "sourceMaps": true,
+      "presentation": {
+        "group": "Local",
+        "order": 1
+      }
+    },
+
+    // ── Opción 3: Lanzar backend en local (sin debug, más rápido) ─────────────
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "▶️  Local — Launch Backend (watch)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "./apps/backend", "start:dev"],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+      "envFile": "${workspaceFolder}/apps/backend/.env",
+      "presentation": {
+        "group": "Local",
+        "order": 2
+      }
+    }
+  ],
+
+  "compounds": [
+    // ── Compound: attach al container (más común en el día a día) ──────────────
+    {
+      "name": "🐳 Docker — Full Stack (debug)",
+      "configurations": ["🐛 Docker — Attach Backend"],
+      "presentation": {
+        "group": "Docker",
+        "order": 1
+      }
+    }
+  ]
+}

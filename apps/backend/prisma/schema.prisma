@@ -1,0 +1,313 @@
+// Pensum Cloud - Prisma Schema
+// Multi-Tenant SaaS for University Curriculum Management
+// Architecture: Clean Architecture + DDD + CQRS
+// Conventions: UUID PKs, snake_case columns, soft-delete (deleted_at), tenant_id on all tables
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// TENANT
+// ---------------------------------------------------------------------------
+
+model Tenant {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  universities University[]
+  users        User[]
+
+  @@map("tenants")
+}
+
+// ---------------------------------------------------------------------------
+// UNIVERSITY
+// ---------------------------------------------------------------------------
+
+model University {
+  id        String    @id @default(uuid())
+  tenantId  String    @map("tenant_id")
+  name      String
+  code      String
+  country   String?
+  website   String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  faculties Faculty[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("universities")
+}
+
+// ---------------------------------------------------------------------------
+// FACULTY
+// ---------------------------------------------------------------------------
+
+model Faculty {
+  id           String    @id @default(uuid())
+  tenantId     String    @map("tenant_id")
+  universityId String    @map("university_id")
+  name         String
+  code         String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  university University @relation(fields: [universityId], references: [id])
+  careers    Career[]
+
+  @@unique([universityId, code])
+  @@index([tenantId])
+  @@map("faculties")
+}
+
+// ---------------------------------------------------------------------------
+// CAREER
+// ---------------------------------------------------------------------------
+
+model Career {
+  id          String    @id @default(uuid())
+  tenantId    String    @map("tenant_id")
+  facultyId   String    @map("faculty_id")
+  name        String
+  code        String
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  faculty   Faculty      @relation(fields: [facultyId], references: [id])
+  curricula Curriculum[]
+
+  @@unique([facultyId, code])
+  @@index([tenantId])
+  @@map("careers")
+}
+
+// ---------------------------------------------------------------------------
+// CURRICULUM
+// ---------------------------------------------------------------------------
+
+enum CurriculumStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model Curriculum {
+  id          String           @id @default(uuid())
+  tenantId    String           @map("tenant_id")
+  careerId    String           @map("career_id")
+  version     String
+  name        String
+  description String?
+  status      CurriculumStatus @default(DRAFT)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  deletedAt   DateTime?        @map("deleted_at")
+
+  career    Career     @relation(fields: [careerId], references: [id])
+  semesters Semester[]
+
+  @@unique([careerId, version])
+  @@index([tenantId])
+  @@map("curricula")
+}
+
+// ---------------------------------------------------------------------------
+// SEMESTER
+// ---------------------------------------------------------------------------
+
+model Semester {
+  id           String    @id @default(uuid())
+  tenantId     String    @map("tenant_id")
+  curriculumId String    @map("curriculum_id")
+  number       Int
+  name         String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  curriculum Curriculum @relation(fields: [curriculumId], references: [id])
+  subjects   Subject[]
+
+  @@unique([curriculumId, number])
+  @@index([tenantId])
+  @@map("semesters")
+}
+
+// ---------------------------------------------------------------------------
+// SUBJECT
+// ---------------------------------------------------------------------------
+
+model Subject {
+  id            String    @id @default(uuid())
+  tenantId      String    @map("tenant_id")
+  semesterId    String    @map("semester_id")
+  name          String
+  code          String
+  credits       Int
+  hoursTheory   Int       @default(0) @map("hours_theory")
+  hoursPractice Int       @default(0) @map("hours_practice")
+  description   String?
+  position      Int       @default(0)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  semester         Semester            @relation(fields: [semesterId], references: [id])
+  prerequisites    Prerequisite[]      @relation("SubjectPrerequisites")
+  requiredBy       Prerequisite[]      @relation("PrerequisiteOf")
+  competencies     SubjectCompetency[]
+  learningOutcomes LearningOutcome[]
+
+  @@unique([semesterId, code])
+  @@index([tenantId])
+  @@map("subjects")
+}
+
+// ---------------------------------------------------------------------------
+// PREREQUISITE
+// ---------------------------------------------------------------------------
+
+model Prerequisite {
+  id         String   @id @default(uuid())
+  tenantId   String   @map("tenant_id")
+  subjectId  String   @map("subject_id")
+  requiresId String   @map("requires_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  subject  Subject @relation("SubjectPrerequisites", fields: [subjectId], references: [id])
+  requires Subject @relation("PrerequisiteOf", fields: [requiresId], references: [id])
+
+  @@unique([subjectId, requiresId])
+  @@index([tenantId])
+  @@map("prerequisites")
+}
+
+// ---------------------------------------------------------------------------
+// COMPETENCY
+// ---------------------------------------------------------------------------
+
+model Competency {
+  id          String    @id @default(uuid())
+  tenantId    String    @map("tenant_id")
+  name        String
+  description String?
+  code        String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  subjects         SubjectCompetency[]
+  learningOutcomes LearningOutcome[]
+
+  @@index([tenantId])
+  @@map("competencies")
+}
+
+// ---------------------------------------------------------------------------
+// SUBJECT - COMPETENCY (pivot)
+// ---------------------------------------------------------------------------
+
+model SubjectCompetency {
+  subjectId    String @map("subject_id")
+  competencyId String @map("competency_id")
+
+  subject    Subject    @relation(fields: [subjectId], references: [id])
+  competency Competency @relation(fields: [competencyId], references: [id])
+
+  @@id([subjectId, competencyId])
+  @@map("subject_competencies")
+}
+
+// ---------------------------------------------------------------------------
+// LEARNING OUTCOME
+// ---------------------------------------------------------------------------
+
+model LearningOutcome {
+  id           String    @id @default(uuid())
+  tenantId     String    @map("tenant_id")
+  subjectId    String?   @map("subject_id")
+  competencyId String?   @map("competency_id")
+  description  String
+  code         String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  subject    Subject?    @relation(fields: [subjectId], references: [id])
+  competency Competency? @relation(fields: [competencyId], references: [id])
+
+  @@index([tenantId])
+  @@map("learning_outcomes")
+}
+
+// ---------------------------------------------------------------------------
+// USER
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String    @id @default(uuid())
+  tenantId  String    @map("tenant_id")
+  email     String    @unique
+  password  String
+  firstName String    @map("first_name")
+  lastName  String    @map("last_name")
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  tenant Tenant     @relation(fields: [tenantId], references: [id])
+  roles  UserRole[]
+
+  @@index([tenantId])
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// ROLE
+// ---------------------------------------------------------------------------
+
+model Role {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  users UserRole[]
+
+  @@map("roles")
+}
+
+// ---------------------------------------------------------------------------
+// USER - ROLE (pivot)
+// ---------------------------------------------------------------------------
+
+model UserRole {
+  userId String @map("user_id")
+  roleId String @map("role_id")
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}

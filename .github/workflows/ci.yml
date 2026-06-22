@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: pensum
+          POSTGRES_PASSWORD: pensum
+          POSTGRES_DB: pensum_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://pensum:pensum@localhost:5432/pensum_test
+      JWT_SECRET: ci-test-secret
+      JWT_EXPIRATION: 15m
+      JWT_REFRESH_SECRET: ci-test-refresh-secret
+      JWT_REFRESH_EXPIRATION: 7d
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint backend
+        run: pnpm --filter ./apps/backend lint
+
+      - name: Lint frontend
+        run: pnpm --filter ./apps/frontend lint
+
+      - name: Generate Prisma client
+        run: pnpm --filter ./apps/backend prisma:generate
+
+      - name: Run Prisma migrations (test DB)
+        run: pnpm --filter ./apps/backend prisma:migrate
+        env:
+          DATABASE_URL: postgresql://pensum:pensum@localhost:5432/pensum_test
+
+      - name: Test backend
+        run: pnpm --filter ./apps/backend test --passWithNoTests
+
+      - name: Test frontend
+        run: pnpm --filter ./apps/frontend test --passWithNoTests

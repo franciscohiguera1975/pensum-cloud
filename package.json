@@ -1,0 +1,36 @@
+{
+  "name": "pensum-cloud",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "dev": "bash scripts/dev.sh",
+    "build": "bash scripts/build.sh",
+    "test": "turbo run test",
+    "test:backend": "pnpm --filter ./apps/backend test",
+    "test:frontend": "pnpm --filter ./apps/frontend test",
+    "test:e2e": "pnpm --filter ./apps/backend test:e2e",
+    "lint": "turbo run lint",
+    "db:generate": "pnpm --filter ./apps/backend prisma:generate",
+    "db:migrate": "pnpm --filter ./apps/backend prisma:migrate",
+    "db:migrate:init": "pnpm --filter ./apps/backend prisma:migrate:init",
+    "db:seed": "pnpm --filter ./apps/backend prisma:seed",
+    "db:studio": "pnpm --filter ./apps/backend prisma:studio",
+    "docker:dev": "docker compose -f infrastructure/docker-compose.yml up",
+    "docker:prod": "docker compose -f infrastructure/docker-compose.yml -f infrastructure/docker-compose.prod.yml up -d",
+    "docker:down": "docker compose -f infrastructure/docker-compose.yml down",
+    "docker:down:prod": "docker compose -f infrastructure/docker-compose.yml -f infrastructure/docker-compose.prod.yml down"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

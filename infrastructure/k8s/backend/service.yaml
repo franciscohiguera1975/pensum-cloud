@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pensum-backend
+  namespace: pensum-cloud
+  labels:
+    app: pensum-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: pensum-backend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000

@@ -1,0 +1,60 @@
+# =============================================================================
+# Pensum Cloud — Base Compose (postgres siempre activo)
+#
+# Modos de uso:
+#   Dev  (local)  : docker compose up            ← auto-merge con override.yml
+#   Prod (server) : docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#   Tools         : docker compose --profile tools up -d   ← agrega PgAdmin
+# =============================================================================
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:18-alpine
+    container_name: pensum_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-pensum_cloud}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      # postgres 18+ requiere montar en /var/lib/postgresql (sin /data al final).
+      # La imagen crea sus propios subdirectorios internamente.
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 20s   # tiempo de gracia para que postgres inicialice
+    networks:
+      - pensum_network
+
+  # ── PgAdmin (perfil: tools) ─────────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pensum_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@pensum.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - '${PGADMIN_PORT:-5050}:80'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pensum_network
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  pensum_network:
+    driver: bridge

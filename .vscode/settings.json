@@ -1,0 +1,42 @@
+{
+  // TypeScript — usar la versión del workspace
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // Editor
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Excluir rutas pesadas del explorador y búsqueda
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.pnpm": true,
+    "**/dist": true,
+    "**/.turbo": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.pnpm-store": true,
+    "**/dist": true,
+    "**/.turbo": true,
+    "**/coverage": true
+  },
+
+  // Extensiones recomendadas para el proyecto
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // NestJS — reconocer decoradores
+  "javascript.suggest.autoImports": true,
+  "typescript.suggest.autoImports": true
+}
