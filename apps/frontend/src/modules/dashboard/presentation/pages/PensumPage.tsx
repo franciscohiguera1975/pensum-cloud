@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/shared/lib/api-client';
+import type { SemesterResponse, SubjectResponse } from '@/shared/types/api.types';
 import { PensumFlowEditor } from '@/modules/reactflow-editor/PensumFlowEditor';
 import { PensumViewer3D } from '@/modules/threejs-viewer/PensumViewer3D';
 import {
@@ -19,6 +20,87 @@ const TABS: { id: View; label: string }[] = [
   { id: '2d', label: '🔗 Prerrequisitos' },
   { id: '3d', label: '🌐 Vista 3D' },
 ];
+
+// ── Resumen por semestre ──────────────────────────────────────────────────────
+function CurriculumSummaryPanel({
+  semesters,
+  subjects,
+}: {
+  semesters: SemesterResponse[];
+  subjects: SubjectResponse[];
+}) {
+  const rows = semesters.map((sem) => {
+    const ss = subjects.filter((s) => s.semesterId === sem.id);
+    const cd = ss.reduce((a, s) => a + (s.hoursTheory ?? 0), 0);
+    const pe = ss.reduce((a, s) => a + (s.hoursPractice ?? 0), 0);
+    const uc = ss.reduce((a, s) => a + (s.credits ?? 0), 0);
+    const ta = uc * 32;
+    const th = cd + pe + ta;
+    return { sem, cd, pe, ta, th, uc };
+  });
+
+  const tot = rows.reduce(
+    (a, r) => ({ cd: a.cd + r.cd, pe: a.pe + r.pe, ta: a.ta + r.ta, th: a.th + r.th, uc: a.uc + r.uc }),
+    { cd: 0, pe: 0, ta: 0, th: 0, uc: 0 },
+  );
+
+  return (
+    <div className="w-52 shrink-0 border-r bg-white flex flex-col overflow-hidden">
+      <div className="px-3 py-2 border-b bg-teal-50 shrink-0">
+        <p className="text-[11px] font-semibold text-teal-700 uppercase tracking-wide">Resumen</p>
+      </div>
+      <div className="overflow-y-auto flex-1">
+        <table className="w-full text-[11px] border-collapse">
+          <thead>
+            <tr className="bg-gray-50 text-gray-500 sticky top-0 z-10">
+              <th className="text-left px-2 py-1.5 font-medium border-b border-gray-100">Sem</th>
+              <th className="text-right px-1 py-1.5 font-medium border-b border-gray-100">CD</th>
+              <th className="text-right px-1 py-1.5 font-medium border-b border-gray-100">PE</th>
+              <th className="text-right px-1 py-1.5 font-medium border-b border-gray-100">TA</th>
+              <th className="text-right px-1 py-1.5 font-medium border-b border-gray-100">TH</th>
+              <th className="text-right px-2 py-1.5 font-medium border-b border-gray-100">UC</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({ sem, cd, pe, ta, th, uc }) => (
+              <tr key={sem.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td className="px-2 py-1 text-gray-600 font-medium">S{sem.number}</td>
+                <td className="px-1 py-1 text-right text-gray-500">{cd}</td>
+                <td className="px-1 py-1 text-right text-gray-500">{pe}</td>
+                <td className="px-1 py-1 text-right text-gray-500">{ta}</td>
+                <td className="px-1 py-1 text-right text-gray-600">{th}</td>
+                <td className="px-2 py-1 text-right font-semibold text-teal-700">{uc}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-teal-200 bg-teal-50 font-semibold text-teal-800 text-[11px]">
+              <td className="px-2 py-1.5">Total</td>
+              <td className="px-1 py-1.5 text-right">{tot.cd}</td>
+              <td className="px-1 py-1.5 text-right">{tot.pe}</td>
+              <td className="px-1 py-1.5 text-right">{tot.ta}</td>
+              <td className="px-1 py-1.5 text-right">{tot.th}</td>
+              <td className="px-2 py-1.5 text-right">{tot.uc}</td>
+            </tr>
+          </tfoot>
+        </table>
+        <div className="px-3 py-2 border-t border-gray-100 space-y-0.5">
+          {[
+            ['CD', 'Clase Directa'],
+            ['PE', 'Práctica Empresarial'],
+            ['TA', 'Trabajo Autónomo (UC×32)'],
+            ['TH', 'Total Horas'],
+            ['UC', 'Unidades Crédito'],
+          ].map(([abbr, label]) => (
+            <p key={abbr} className="text-[10px] text-gray-400">
+              <span className="font-semibold text-gray-500">{abbr}</span> {label}
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Inner component — only rendered when curriculumId is set
 function PensumContent({
@@ -179,25 +261,30 @@ function PensumContent({
       </div>
 
       {/* View content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden flex">
         {view === 'grid' && (
-          <PensumGridViewer
-            curriculumId={curriculumId}
-            semesters={toGridSemesters(semesters)}
-            subjects={toGridSubjects(subjects)}
-            editable
-            onRefresh={() => {
-              queryClient.invalidateQueries({ queryKey: ['semesters', curriculumId] });
-              queryClient.invalidateQueries({ queryKey: ['subjects-all'] });
-            }}
-          />
+          <CurriculumSummaryPanel semesters={semesters} subjects={subjects} />
         )}
-        {view === '2d' && (
-          <PensumFlowEditor curriculumId={curriculumId} curriculumName={curriculumName} />
-        )}
-        {view === '3d' && (
-          <PensumViewer3D curriculumId={curriculumId} curriculumName={curriculumName} />
-        )}
+        <div className="flex-1 overflow-hidden">
+          {view === 'grid' && (
+            <PensumGridViewer
+              curriculumId={curriculumId}
+              semesters={toGridSemesters(semesters)}
+              subjects={toGridSubjects(subjects)}
+              editable
+              onRefresh={() => {
+                queryClient.invalidateQueries({ queryKey: ['semesters', curriculumId] });
+                queryClient.invalidateQueries({ queryKey: ['subjects-all'] });
+              }}
+            />
+          )}
+          {view === '2d' && (
+            <PensumFlowEditor curriculumId={curriculumId} curriculumName={curriculumName} />
+          )}
+          {view === '3d' && (
+            <PensumViewer3D curriculumId={curriculumId} curriculumName={curriculumName} />
+          )}
+        </div>
       </div>
     </div>
   );

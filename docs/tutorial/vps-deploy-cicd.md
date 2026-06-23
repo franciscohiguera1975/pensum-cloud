@@ -341,28 +341,17 @@ nano /etc/nginx/sites-available/pensum-cloud
 
 ```nginx
 # /etc/nginx/sites-available/pensum-cloud
-# Ajusta los puertos si cambiaste FRONTEND_PORT / BACKEND_PORT
+# Ajusta el puerto si cambiaste FRONTEND_PORT en infrastructure/.env
 
 server {
     listen 80;
     server_name tu-dominio.com www.tu-dominio.com;
 
-    # Frontend (container corriendo en FRONTEND_PORT)
+    # Todo el tráfico va al frontend container.
+    # El nginx interno del frontend ya hace proxy de /api/ → backend:3000
+    # dentro de la red Docker, así que NO se necesita un bloque /api/ aquí.
     location / {
-        proxy_pass         http://127.0.0.1:8080;
-        proxy_http_version 1.1;
-        proxy_set_header   Host              $host;
-        proxy_set_header   X-Real-IP         $remote_addr;
-        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $scheme;
-    }
-
-    # Backend API (container corriendo en BACKEND_PORT)
-    # ⚠️  Solo necesario si el frontend no hace proxy interno al backend.
-    # Si el frontend container ya hace proxy a /api/ → backend:3000,
-    # esta sección no es necesaria.
-    location /api/ {
-        proxy_pass         http://127.0.0.1:3001;
+        proxy_pass         http://127.0.0.1:5173;
         proxy_http_version 1.1;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
