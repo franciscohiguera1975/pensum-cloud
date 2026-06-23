@@ -1,4 +1,4 @@
-# Despliegue en VPS + CI/CD con GitHub Actions
+# Despliegue Pensum-Cloud en VPS + CI/CD con GitHub Actions
 
 Guía paso a paso para llevar Pensum Cloud a producción en un VPS Ubuntu y automatizar los despliegues con GitHub Actions.
 
