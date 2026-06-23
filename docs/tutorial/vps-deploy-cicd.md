@@ -712,6 +712,62 @@ docker system df
 docker system prune -f
 ```
 
+### Verificar que el deploy funcionó correctamente
+
+```bash
+# 1. Containers en estado "Running" (no "Restarting")
+docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
+
+# 2. Logs del backend: migraciones aplicadas + app arrancada
+docker logs pensum_backend --tail 30
+
+# 3. API responde
+curl -s http://localhost:3001/api/v1/
+
+# 4. Frontend devuelve 200
+curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/
+
+# 5. Tablas de DB creadas correctamente
+docker exec pensum_postgres psql -U postgres -d pensum_cloud -c "\dt" | head -20
+```
+
+---
+
+## 12. Troubleshooting
+
+### Backend en estado "Restarting" al primer deploy
+
+**Causa:** Las migraciones de Prisma no se aplicaron antes de que la app intentara conectarse a la DB.
+
+**Fix:** El `CMD` del Dockerfile ya corre `prisma migrate deploy` antes de `node dist/main`. Si el container sigue reiniciando, revisar los logs:
+```bash
+docker logs pensum_backend --tail 50
+```
+
+### `Error: Could not parse schema engine response` / Prisma + Alpine
+
+**Causa:** `node:20-alpine` usa musl libc + OpenSSL 3.x, pero Prisma no detecta la versión automáticamente y usa un binario incompatible.
+
+**Fix aplicado en el código:**
+1. `apps/backend/prisma/schema.prisma` — `binaryTargets = ["native", "linux-musl-openssl-3.0.x"]`
+2. `apps/backend/Dockerfile` — `RUN apk add --no-cache openssl` en los stages `base` y `production`
+
+Después de aplicar estos cambios, reconstruir la imagen:
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml build backend
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d backend
+```
+
+### `git pull` falla: `Permission denied (publickey)`
+
+El VPS no tiene una SSH key autorizada en GitHub. Ver sección 4 para configurar una deploy key.
+
+Alternativa rápida: copiar los archivos modificados via `scp` desde la máquina local:
+```bash
+scp apps/backend/Dockerfile root@<IP_VPS>:/opt/pensum-cloud/apps/backend/Dockerfile
+scp apps/backend/prisma/schema.prisma root@<IP_VPS>:/opt/pensum-cloud/apps/backend/prisma/schema.prisma
+```
+
 ---
 
 ## Resumen de comandos clave
