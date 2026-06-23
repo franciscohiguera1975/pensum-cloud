@@ -45,9 +45,9 @@ RUN apk add --no-cache openssl
 WORKDIR /app
 ENV NODE_ENV=production
 EXPOSE 3000
-COPY --from=builder /app/apps/backend/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/backend/node_modules ./apps/backend/node_modules
-COPY --from=builder /app/apps/backend/prisma ./prisma
-COPY --from=builder /app/apps/backend/package.json ./package.json
-CMD ["sh", "-c", "apps/backend/node_modules/.bin/prisma migrate deploy && node dist/src/main"]
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
+COPY --from=builder /app/apps/backend/package.json ./apps/backend/package.json
+CMD ["sh", "-c", "apps/backend/node_modules/.bin/prisma migrate deploy --schema=apps/backend/prisma/schema.prisma && node apps/backend/dist/src/main"]

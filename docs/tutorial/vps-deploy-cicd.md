@@ -302,7 +302,7 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 
 ```bash
 # (Opcional) Cargar datos de ejemplo — solo después de que el container esté Running
-docker exec pensum_backend node dist/prisma/seed.js
+docker exec pensum_backend node apps/backend/dist/prisma/seed.js
 ```
 
 Para verificar que las migraciones corrieron correctamente:
@@ -778,7 +778,7 @@ scp apps/backend/prisma/schema.prisma root@<IP_VPS>:/opt/pensum-cloud/apps/backe
 | Ver estado | `docker compose … ps` |
 | Ver logs | `docker compose … logs -f [servicio]` |
 | Migraciones | Automáticas al iniciar el container (ver logs: `docker logs pensum_backend`) |
-| Seed | `docker exec pensum_backend node dist/prisma/seed.js` |
+| Seed | `docker exec pensum_backend node apps/backend/dist/prisma/seed.js` |
 | Apagar todo | `docker compose … down` |
 | Limpiar imágenes viejas | `docker image prune -f` |
 | Backup DB | `docker exec pensum_postgres pg_dump -U postgres -d pensum_cloud -Fc > backup.dump` |
