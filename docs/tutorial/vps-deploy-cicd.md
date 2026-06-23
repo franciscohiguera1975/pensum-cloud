@@ -156,8 +156,17 @@ Copia la clave pública y agrégala en GitHub:
 Luego clona con SSH:
 ```bash
 GIT_SSH_COMMAND="ssh -i ~/.ssh/github_deploy" git clone git@github.com:<TU_ORG>/<TU_REPO>.git .
-GIT_SSH_COMMAND="ssh -i ~/.ssh/github_deploy" git clone git@github.com:franciscohiguera1975/pensum-cloud.git .
 ```
+
+> **Importante:** Esta misma deploy key (o la SSH key del usuario `deploy`) también es la que permite que `git pull` funcione desde el VPS en los deploys automatizados. Configura el host de GitHub en `~/.ssh/config` para que `git pull` use la clave correcta automáticamente:
+>
+> ```bash
+> cat >> ~/.ssh/config << 'EOF'
+> Host github.com
+>   IdentityFile ~/.ssh/github_deploy
+>   StrictHostKeyChecking no
+> EOF
+> ```
 
 ---
 
@@ -287,14 +296,18 @@ docker compose \
 docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 ```
 
-### Ejecutar migraciones y seed inicial
+### Migraciones y seed inicial
+
+> **Las migraciones se ejecutan automáticamente** al iniciar el container backend — el `CMD` del Dockerfile corre `prisma migrate deploy` antes de levantar la app. No es necesario correrlas manualmente.
 
 ```bash
-# Ejecutar migraciones de Prisma
-docker exec pensum_backend npx prisma migrate deploy
-
-# (Opcional) Cargar datos de ejemplo
+# (Opcional) Cargar datos de ejemplo — solo después de que el container esté Running
 docker exec pensum_backend node dist/prisma/seed.js
+```
+
+Para verificar que las migraciones corrieron correctamente:
+```bash
+docker logs pensum_backend | grep -E "migrat|error|Error" | head -20
 ```
 
 ### Verificar que funciona
@@ -470,8 +483,8 @@ jobs:
               --env-file .env \
               up -d --no-build
 
-            # Ejecutar migraciones pendientes
-            docker exec pensum_backend npx prisma migrate deploy
+            # Las migraciones corren automáticamente al iniciar el container
+            # (el CMD del Dockerfile ejecuta prisma migrate deploy antes de node dist/main)
 
             # Limpiar imágenes antiguas
             docker image prune -f
@@ -504,7 +517,7 @@ script: |
   docker pull ghcr.io/${{ github.repository_owner }}/pensum-cloud-frontend:main
   cd infrastructure
   docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env up -d --no-build
-  docker exec pensum_backend npx prisma migrate deploy
+  # Las migraciones corren automáticamente al iniciar el container
   docker image prune -f
   echo "✅ Deploy completado: $(date)"
 ```
@@ -620,7 +633,7 @@ docker compose \
   --env-file .env \
   up -d --build
 
-docker exec pensum_backend npx prisma migrate deploy
+# Las migraciones corren automáticamente al iniciar el container backend
 docker image prune -f
 ```
 
@@ -708,7 +721,7 @@ docker system prune -f
 | Levantar en producción | `docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env up -d` |
 | Ver estado | `docker compose … ps` |
 | Ver logs | `docker compose … logs -f [servicio]` |
-| Migraciones | `docker exec pensum_backend npx prisma migrate deploy` |
+| Migraciones | Automáticas al iniciar el container (ver logs: `docker logs pensum_backend`) |
 | Seed | `docker exec pensum_backend node dist/prisma/seed.js` |
 | Apagar todo | `docker compose … down` |
 | Limpiar imágenes viejas | `docker image prune -f` |

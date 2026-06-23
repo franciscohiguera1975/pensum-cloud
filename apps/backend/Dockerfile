@@ -8,7 +8,7 @@ FROM node:20-alpine AS base
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@9 --activate
+RUN apk add --no-cache openssl && corepack enable && corepack prepare pnpm@9 --activate
 
 # ── Stage 2: deps (install — layer cached until lockfile changes) ─────────────
 FROM base AS deps
@@ -41,6 +41,7 @@ RUN cd apps/backend && pnpm exec prisma generate && pnpm build
 
 # ── Stage 5: production (minimal runtime) ─────────────────────────────────────
 FROM node:20-alpine AS production
+RUN apk add --no-cache openssl
 WORKDIR /app
 ENV NODE_ENV=production
 EXPOSE 3000
