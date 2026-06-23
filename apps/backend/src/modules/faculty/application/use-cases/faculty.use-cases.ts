@@ -79,7 +79,24 @@ export class UpdateFacultyUseCase {
   ): Promise<FacultyResponseDto> {
     const faculty = await this.repo.findById(id, tenantId);
     if (!faculty) throw new NotFoundException(`Faculty "${id}" not found`);
-    faculty.update({ name: dto.name });
+
+    if (dto.code !== undefined) {
+      const normalizedCode = dto.code.trim().toUpperCase();
+      if (normalizedCode !== faculty.code) {
+        const exists = await this.repo.existsByCode(
+          normalizedCode,
+          faculty.universityId,
+          faculty.id,
+        );
+        if (exists) {
+          throw new ConflictException(
+            `Faculty with code "${normalizedCode}" already exists in this university`,
+          );
+        }
+      }
+    }
+
+    faculty.update({ name: dto.name, code: dto.code });
     return FacultyResponseDto.fromDomain(await this.repo.update(faculty));
   }
 }

@@ -16,6 +16,10 @@ export class UpdateFacultyDto {
   @ApiPropertyOptional({ example: 'Facultad de Ciencias', maxLength: 255 })
   @IsString() @IsNotEmpty() @IsOptional() @MaxLength(255)
   name?: string;
+
+  @ApiPropertyOptional({ example: 'FC', maxLength: 20 })
+  @IsString() @IsNotEmpty() @IsOptional() @MaxLength(20)
+  code?: string;
 }
 
 export class FacultyResponseDto {

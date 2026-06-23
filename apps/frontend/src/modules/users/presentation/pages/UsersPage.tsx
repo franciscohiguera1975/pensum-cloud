@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi } from '@/modules/users/infrastructure/users.api';
+import { universityApi } from '@/modules/university/infrastructure/university.api';
 import { Modal } from '@/shared/components/Modal';
 import type { UserResponse } from '@/shared/types/api.types';
 
@@ -179,10 +180,78 @@ function RolesForm({
   );
 }
 
+// ── UniversitiesForm ──────────────────────────────────────────────────────────
+function UniversitiesForm({
+  initial,
+  onSubmit,
+  onCancel,
+}: {
+  initial: UserResponse;
+  onSubmit: (universityIds: string[]) => void;
+  onCancel: () => void;
+}) {
+  const [selected, setSelected] = useState<string[]>(initial.universityIds ?? []);
+  const { data: universities = [], isLoading } = useQuery({
+    queryKey: ['universities'],
+    queryFn: universityApi.getAll,
+  });
+
+  const toggle = (id: string) =>
+    setSelected(selected.includes(id) ? selected.filter((u) => u !== id) : [...selected, id]);
+
+  return (
+    <form
+      onSubmit={(e) => { e.preventDefault(); onSubmit(selected); }}
+      className="space-y-4"
+    >
+      <p className="text-sm text-gray-500">
+        Universidades a las que <strong>{initial.firstName} {initial.lastName}</strong> puede acceder.
+      </p>
+      <p className="text-xs text-gray-400">
+        Los administradores siempre tienen acceso a todas las universidades.
+      </p>
+
+      {isLoading ? (
+        <p className="text-sm text-gray-400">Cargando universidades...</p>
+      ) : universities.length === 0 ? (
+        <p className="text-sm text-gray-400 italic">No hay universidades registradas.</p>
+      ) : (
+        <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
+          {universities.map((u) => (
+            <button
+              key={u.id}
+              type="button"
+              onClick={() => toggle(u.id)}
+              className={`flex items-center justify-between text-left text-sm px-3 py-2 rounded-lg border transition-colors ${
+                selected.includes(u.id)
+                  ? 'bg-indigo-50 border-indigo-400 text-indigo-800'
+                  : 'bg-white border-gray-200 text-gray-600 hover:border-indigo-300'
+              }`}
+            >
+              <span>
+                <span className="font-medium">{u.name}</span>
+                <span className="text-xs text-gray-400 ml-2">{u.code}</span>
+              </span>
+              <span className={`text-xs ${selected.includes(u.id) ? 'text-indigo-600' : 'text-gray-300'}`}>
+                {selected.includes(u.id) ? '✓ Asignada' : 'Asignar'}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="flex justify-end gap-2">
+        <button type="button" onClick={onCancel} className="text-sm px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">Cancelar</button>
+        <button type="submit" className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">Guardar acceso</button>
+      </div>
+    </form>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export function UsersPage() {
   const qc = useQueryClient();
-  const [modal, setModal] = useState<'add' | 'edit' | 'roles' | 'deactivate' | null>(null);
+  const [modal, setModal] = useState<'add' | 'edit' | 'roles' | 'universities' | 'deactivate' | null>(null);
   const [target, setTarget] = useState<UserResponse | null>(null);
   const closeModal = () => { setModal(null); setTarget(null); };
 
@@ -205,6 +274,12 @@ export function UsersPage() {
   const assignRoles = useMutation({
     mutationFn: ({ id, roleNames }: { id: string; roleNames: string[] }) =>
       usersApi.assignRoles(id, roleNames),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); closeModal(); },
+  });
+
+  const assignUniversities = useMutation({
+    mutationFn: ({ id, universityIds }: { id: string; universityIds: string[] }) =>
+      usersApi.assignUniversities(id, universityIds),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); closeModal(); },
   });
 
@@ -267,6 +342,7 @@ export function UsersPage() {
                     <div className="flex gap-1 justify-end">
                       <button onClick={() => { setTarget(u); setModal('edit'); }} className="text-xs text-indigo-500 hover:text-indigo-700 px-2 py-1 rounded hover:bg-indigo-50 transition-colors">Editar</button>
                       <button onClick={() => { setTarget(u); setModal('roles'); }} className="text-xs text-purple-500 hover:text-purple-700 px-2 py-1 rounded hover:bg-purple-50 transition-colors">Roles</button>
+                      <button onClick={() => { setTarget(u); setModal('universities'); }} className="text-xs text-teal-500 hover:text-teal-700 px-2 py-1 rounded hover:bg-teal-50 transition-colors">Universidades</button>
                       {u.isActive && (
                         <button onClick={() => { setTarget(u); setModal('deactivate'); }} className="text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50 transition-colors">Desactivar</button>
                       )}
@@ -300,6 +376,16 @@ export function UsersPage() {
           <RolesForm
             initial={target}
             onSubmit={(roleNames) => assignRoles.mutate({ id: target.id, roleNames })}
+            onCancel={closeModal}
+          />
+        </Modal>
+      )}
+
+      {modal === 'universities' && target && (
+        <Modal title="Gestionar Universidades" onClose={closeModal}>
+          <UniversitiesForm
+            initial={target}
+            onSubmit={(universityIds) => assignUniversities.mutate({ id: target.id, universityIds })}
             onCancel={closeModal}
           />
         </Modal>

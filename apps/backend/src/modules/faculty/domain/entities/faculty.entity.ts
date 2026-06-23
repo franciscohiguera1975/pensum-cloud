@@ -46,12 +46,18 @@ export class Faculty {
     return new Faculty(props);
   }
 
-  update(params: { name?: string }): void {
+  update(params: { name?: string; code?: string }): void {
     if (params.name !== undefined) {
       const name = params.name.trim();
       if (!name) throw new Error('Faculty name cannot be empty');
       if (name.length > 255) throw new Error('Faculty name must be at most 255 characters');
       this.props.name = name;
+    }
+    if (params.code !== undefined) {
+      const code = params.code.trim().toUpperCase();
+      if (!code) throw new Error('Faculty code cannot be empty');
+      if (code.length > 20) throw new Error('Faculty code must be at most 20 characters');
+      this.props.code = code;
     }
     this.props.updatedAt = new Date();
   }

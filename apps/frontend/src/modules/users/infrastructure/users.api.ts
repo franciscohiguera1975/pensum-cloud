@@ -26,6 +26,10 @@ export const usersApi = {
     const { data } = await apiClient.put<UserResponse>(`/users/${id}/roles`, { roleNames });
     return data;
   },
+  assignUniversities: async (id: string, universityIds: string[]): Promise<UserResponse> => {
+    const { data } = await apiClient.put<UserResponse>(`/users/${id}/universities`, { universityIds });
+    return data;
+  },
   deactivate: async (id: string): Promise<void> => {
     await apiClient.patch(`/users/${id}/deactivate`);
   },

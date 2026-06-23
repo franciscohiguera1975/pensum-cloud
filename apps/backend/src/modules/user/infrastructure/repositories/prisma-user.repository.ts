@@ -6,6 +6,7 @@ import { UserMapper } from '../mappers/user.mapper';
 
 const includeRoles = {
   roles: { include: { role: true } },
+  universities: true,
 } as const;
 
 @Injectable()
@@ -88,6 +89,25 @@ export class PrismaUserRepository implements IUserRepository {
     if (roles.length > 0) {
       await this.prisma.userRole.createMany({
         data: roles.map((r) => ({ userId, roleId: r.id })),
+        skipDuplicates: true,
+      });
+    }
+  }
+
+  async assignUniversities(
+    userId: string,
+    universityIds: string[],
+    tenantId: string,
+  ): Promise<void> {
+    // Only grant access to universities that belong to the tenant.
+    const valid = await this.prisma.university.findMany({
+      where: { id: { in: universityIds }, tenantId, deletedAt: null },
+      select: { id: true },
+    });
+    await this.prisma.userUniversity.deleteMany({ where: { userId } });
+    if (valid.length > 0) {
+      await this.prisma.userUniversity.createMany({
+        data: valid.map((u) => ({ userId, universityId: u.id })),
         skipDuplicates: true,
       });
     }

@@ -12,8 +12,16 @@ export class ListUniversitiesUseCase {
     private readonly repo: IUniversityRepository,
   ) {}
 
-  async execute(tenantId: string): Promise<UniversityResponseDto[]> {
-    const universities = await this.repo.findAll(tenantId);
+  async execute(
+    tenantId: string,
+    user?: { userId: string; roles: string[] },
+  ): Promise<UniversityResponseDto[]> {
+    // ADMINs (and internal calls without a user context) see every university
+    // in the tenant. Other users only see universities explicitly granted.
+    const isAdmin = !user || user.roles.includes('ADMIN');
+    const universities = isAdmin
+      ? await this.repo.findAll(tenantId)
+      : await this.repo.findAllForUser(tenantId, user.userId);
     return universities.map(UniversityResponseDto.fromDomain);
   }
 }

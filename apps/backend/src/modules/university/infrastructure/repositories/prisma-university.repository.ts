@@ -23,6 +23,18 @@ export class PrismaUniversityRepository implements IUniversityRepository {
     return rows.map(UniversityMapper.toDomain);
   }
 
+  async findAllForUser(tenantId: string, userId: string): Promise<University[]> {
+    const rows = await this.prisma.university.findMany({
+      where: {
+        tenantId,
+        deletedAt: null,
+        users: { some: { userId } },
+      },
+      orderBy: { name: 'asc' },
+    });
+    return rows.map(UniversityMapper.toDomain);
+  }
+
   async existsByCode(
     code: string,
     tenantId: string,

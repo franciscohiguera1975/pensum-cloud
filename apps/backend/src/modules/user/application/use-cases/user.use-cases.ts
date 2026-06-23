@@ -3,7 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { IUserRepository, USER_REPOSITORY } from '../../domain/repositories/user.repository.interface';
 import { User } from '../../domain/entities/user.entity';
-import { AssignRolesDto, CreateUserDto, UpdateUserDto, UserResponseDto } from '../dto/user.dto';
+import { AssignRolesDto, AssignUniversitiesDto, CreateUserDto, UpdateUserDto, UserResponseDto } from '../dto/user.dto';
 
 // ── Mapper (inline) ───────────────────────────────────────────────────────────
 
@@ -17,6 +17,7 @@ function toResponse(user: User): UserResponseDto {
     fullName: user.fullName,
     isActive: user.isActive,
     roles: user.roles,
+    universityIds: user.universityIds,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
@@ -122,6 +123,24 @@ export class AssignRolesUseCase {
   }
 }
 
+// ── AssignUniversitiesUseCase ─────────────────────────────────────────────────
+
+@Injectable()
+export class AssignUniversitiesUseCase {
+  constructor(
+    @Inject(USER_REPOSITORY)
+    private readonly repo: IUserRepository,
+  ) {}
+
+  async execute(id: string, dto: AssignUniversitiesDto, tenantId: string): Promise<UserResponseDto> {
+    const user = await this.repo.findById(id, tenantId);
+    if (!user) throw new NotFoundException(`User ${id} not found`);
+    await this.repo.assignUniversities(id, dto.universityIds, tenantId);
+    const updated = await this.repo.findById(id, tenantId);
+    return toResponse(updated!);
+  }
+}
+
 // ── DeactivateUserUseCase ─────────────────────────────────────────────────────
 
 @Injectable()
@@ -163,6 +182,7 @@ export const USER_USE_CASES = [
   ListUsersUseCase,
   UpdateUserUseCase,
   AssignRolesUseCase,
+  AssignUniversitiesUseCase,
   DeactivateUserUseCase,
   DeleteUserUseCase,
 ];

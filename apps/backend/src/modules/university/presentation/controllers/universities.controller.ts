@@ -21,6 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../../../auth/presentation/guards/jwt-auth.guard';
+import { CurrentUser } from '../../../auth/presentation/decorators/current-user.decorator';
+import { JwtPayload } from '../../../auth/domain/services/auth-token.service.interface';
 import { CreateUniversityDto } from '../../application/dto/create-university.dto';
 import { UniversityResponseDto } from '../../application/dto/university-response.dto';
 import { UpdateUniversityDto } from '../../application/dto/update-university.dto';
@@ -56,10 +58,16 @@ export class UniversitiesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List all universities for the tenant' })
+  @ApiOperation({ summary: 'List universities the current user can access' })
   @ApiResponse({ status: 200, type: [UniversityResponseDto] })
-  findAll(@Req() req: Request): Promise<UniversityResponseDto[]> {
-    return this.listUniversities.execute(req.tenantId!);
+  findAll(
+    @Req() req: Request,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<UniversityResponseDto[]> {
+    return this.listUniversities.execute(req.tenantId!, {
+      userId: user.sub,
+      roles: user.roles,
+    });
   }
 
   @Get(':id')

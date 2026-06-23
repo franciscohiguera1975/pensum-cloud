@@ -7,6 +7,7 @@ export interface UserProps {
   lastName: string;
   isActive: boolean;
   roles: string[];
+  universityIds: string[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date | null;
@@ -32,6 +33,7 @@ export class User {
       ...params,
       isActive: true,
       roles: [],
+      universityIds: [],
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
@@ -66,6 +68,7 @@ export class User {
   get fullName(): string { return `${this.props.firstName} ${this.props.lastName}`; }
   get isActive(): boolean { return this.props.isActive; }
   get roles(): string[] { return this.props.roles; }
+  get universityIds(): string[] { return this.props.universityIds; }
   get createdAt(): Date { return this.props.createdAt; }
   get updatedAt(): Date { return this.props.updatedAt; }
   get deletedAt(): Date | null { return this.props.deletedAt ?? null; }

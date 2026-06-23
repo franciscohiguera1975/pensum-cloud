@@ -37,6 +37,13 @@ export class AssignRolesDto {
   roleNames: string[];
 }
 
+export class AssignUniversitiesDto {
+  @ApiProperty({ type: [String], example: ['uuid-1', 'uuid-2'] })
+  @IsArray()
+  @IsString({ each: true })
+  universityIds: string[];
+}
+
 export class UserResponseDto {
   @ApiProperty() id: string;
   @ApiProperty() tenantId: string;
@@ -46,6 +53,7 @@ export class UserResponseDto {
   @ApiProperty() fullName: string;
   @ApiProperty() isActive: boolean;
   @ApiProperty({ type: [String] }) roles: string[];
+  @ApiProperty({ type: [String] }) universityIds: string[];
   @ApiProperty() createdAt: Date;
   @ApiProperty() updatedAt: Date;
 }

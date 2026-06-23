@@ -11,4 +11,5 @@ export interface IUserRepository {
   update(user: User): Promise<void>;
   delete(id: string, tenantId: string): Promise<void>;
   assignRoles(userId: string, roleNames: string[]): Promise<void>;
+  assignUniversities(userId: string, universityIds: string[], tenantId: string): Promise<void>;
 }

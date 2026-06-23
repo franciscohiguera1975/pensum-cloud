@@ -2,7 +2,10 @@ import { Prisma } from '@prisma/client';
 import { User } from '../../domain/entities/user.entity';
 
 type UserWithRoles = Prisma.UserGetPayload<{
-  include: { roles: { include: { role: true } } };
+  include: {
+    roles: { include: { role: true } };
+    universities: true;
+  };
 }>;
 
 export class UserMapper {
@@ -16,6 +19,7 @@ export class UserMapper {
       lastName: raw.lastName,
       isActive: raw.isActive,
       roles: raw.roles.map((ur) => ur.role.name),
+      universityIds: raw.universities.map((uu) => uu.universityId),
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
       deletedAt: raw.deletedAt,

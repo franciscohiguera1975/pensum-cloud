@@ -81,6 +81,7 @@ export interface UserResponse {
   lastName: string;
   isActive: boolean;
   roles: string[];
+  universityIds: string[];
   createdAt: string;
   updatedAt: string;
 }

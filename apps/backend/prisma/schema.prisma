@@ -47,8 +47,9 @@ model University {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  tenant    Tenant           @relation(fields: [tenantId], references: [id])
   faculties Faculty[]
+  users     UserUniversity[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -275,8 +276,9 @@ model User {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  tenant Tenant     @relation(fields: [tenantId], references: [id])
-  roles  UserRole[]
+  tenant       Tenant           @relation(fields: [tenantId], references: [id])
+  roles        UserRole[]
+  universities UserUniversity[]
 
   @@index([tenantId])
   @@map("users")
@@ -311,4 +313,21 @@ model UserRole {
 
   @@id([userId, roleId])
   @@map("user_roles")
+}
+
+// ---------------------------------------------------------------------------
+// USER - UNIVERSITY (access control pivot)
+// A user may be granted access to multiple universities.
+// ---------------------------------------------------------------------------
+
+model UserUniversity {
+  userId       String @map("user_id")
+  universityId String @map("university_id")
+
+  user       User       @relation(fields: [userId], references: [id])
+  university University @relation(fields: [universityId], references: [id])
+
+  @@id([userId, universityId])
+  @@index([universityId])
+  @@map("user_universities")
 }

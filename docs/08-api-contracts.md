@@ -118,7 +118,7 @@ Desactiva un tenant (soft-disable).
 | Método | Ruta | Descripción |
 |--------|------|-------------|
 | `POST` | `/universities` | Crear universidad |
-| `GET` | `/universities` | Listar universidades del tenant |
+| `GET` | `/universities` | Listar universidades **accesibles por el usuario actual** (ADMIN ve todas; otros roles ven solo las asignadas) |
 | `GET` | `/universities/:id` | Obtener por ID |
 | `PUT` | `/universities/:id` | Actualizar nombre, país, website |
 | `DELETE` | `/universities/:id` | Soft-delete (204) |
@@ -147,10 +147,8 @@ Desactiva un tenant (soft-disable).
 | `PUT` | `/faculties/:id` | Actualizar nombre |
 | `DELETE` | `/faculties/:id` | Soft-delete (204) |
 
-**Request body POST/PUT:**
-```json
-{ "name": "Facultad de Ingeniería", "code": "FI" }
-```
+**Request body POST:** `{ "name": "Facultad de Ingeniería", "code": "FI" }`
+**Request body PUT:** `{ "name"?: "...", "code"?: "..." }` (ambos opcionales; `code` valida unicidad por universidad)
 
 ### Careers (nested bajo faculty)
 
@@ -330,6 +328,8 @@ Desactiva un tenant (soft-disable).
 | `GET` | `/users` | Listar usuarios del tenant |
 | `GET` | `/users/:id` | Obtener por ID |
 | `PUT` | `/users/:id` | Actualizar nombre |
+| `PUT` | `/users/:id/roles` | Reemplazar roles del usuario |
+| `PUT` | `/users/:id/universities` | Reemplazar las universidades a las que el usuario tiene acceso |
 | `PATCH` | `/users/:id/deactivate` | Desactivar usuario |
 | `DELETE` | `/users/:id` | Eliminar (soft, 204) |
 
@@ -340,10 +340,22 @@ Desactiva un tenant (soft-disable).
 
 **Response:**
 ```json
-{ "id": "uuid", "tenantId": "uuid", "email": "user@example.com", "firstName": "John", "lastName": "Doe", "fullName": "John Doe", "isActive": true, "roles": [], "createdAt": "...", "updatedAt": "..." }
+{ "id": "uuid", "tenantId": "uuid", "email": "user@example.com", "firstName": "John", "lastName": "Doe", "fullName": "John Doe", "isActive": true, "roles": [], "universityIds": [], "createdAt": "...", "updatedAt": "..." }
 ```
 
 > La contraseña se almacena con bcrypt (12 rounds). El campo `password` nunca se devuelve en las respuestas.
+
+**Request body `PUT /users/:id/roles`:**
+```json
+{ "roleNames": ["ADMIN", "COORDINATOR"] }
+```
+
+**Request body `PUT /users/:id/universities`:**
+```json
+{ "universityIds": ["uuid-1", "uuid-2"] }
+```
+
+> Reemplaza por completo el conjunto de universidades asignadas. Los usuarios con rol `ADMIN` ven todas las universidades sin necesidad de asignación explícita; el resto solo ve las universidades asignadas (ver `GET /universities`).
 
 ---
 

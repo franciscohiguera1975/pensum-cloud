@@ -22,10 +22,11 @@ import {
   ListUsersUseCase,
   UpdateUserUseCase,
   AssignRolesUseCase,
+  AssignUniversitiesUseCase,
   DeactivateUserUseCase,
   DeleteUserUseCase,
 } from '../../application/use-cases/user.use-cases';
-import { AssignRolesDto, CreateUserDto, UpdateUserDto, UserResponseDto } from '../../application/dto/user.dto';
+import { AssignRolesDto, AssignUniversitiesDto, CreateUserDto, UpdateUserDto, UserResponseDto } from '../../application/dto/user.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT')
@@ -38,6 +39,7 @@ export class UsersController {
     private readonly list: ListUsersUseCase,
     private readonly update: UpdateUserUseCase,
     private readonly assignRoles: AssignRolesUseCase,
+    private readonly assignUniversities: AssignUniversitiesUseCase,
     private readonly deactivate: DeactivateUserUseCase,
     private readonly remove: DeleteUserUseCase,
   ) {}
@@ -87,6 +89,17 @@ export class UsersController {
     @Req() req: Request,
   ): Promise<UserResponseDto> {
     return this.assignRoles.execute(id, dto, req.tenantId!);
+  }
+
+  @Put(':id/universities')
+  @ApiOperation({ summary: 'Replace the universities a user can access' })
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  setUniversities(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AssignUniversitiesDto,
+    @Req() req: Request,
+  ): Promise<UserResponseDto> {
+    return this.assignUniversities.execute(id, dto, req.tenantId!);
   }
 
   @Patch(':id/deactivate')

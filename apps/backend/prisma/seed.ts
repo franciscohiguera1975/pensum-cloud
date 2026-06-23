@@ -2237,10 +2237,23 @@ async function main(): Promise<void> {
     create: { userId: viewerUser.id, roleId: viewerRole.id },
   });
 
+  // ────────────────────────────────────────────────────────────────────────────
+  // USER ↔ UNIVERSITY ACCESS CONTROL
+  // ADMIN users implicitly access every university, so an explicit grant is not
+  // required for them. Non-admin users only see universities granted here.
+  // ────────────────────────────────────────────────────────────────────────────
+  for (const u of [coordinatorUser, viewerUser]) {
+    await prisma.userUniversity.upsert({
+      where: { userId_universityId: { userId: u.id, universityId: university.id } },
+      update: {},
+      create: { userId: u.id, universityId: university.id },
+    });
+  }
+
   console.log('✅ Users:');
-  console.log('   admin@demo.edu.co       → Admin123!  [ADMIN]');
-  console.log('   coordinador@demo.edu.co → Coord123!  [COORDINATOR]');
-  console.log('   viewer@demo.edu.co      → Viewer123! [VIEWER]');
+  console.log('   admin@demo.edu.co       → Admin123!  [ADMIN]  (acceso a todas)');
+  console.log('   coordinador@demo.edu.co → Coord123!  [COORDINATOR]  (acceso: UTE)');
+  console.log('   viewer@demo.edu.co      → Viewer123! [VIEWER]  (acceso: UTE)');
 
   // ────────────────────────────────────────────────────────────────────────────
   // POST-PROCESSING: NORMALIZACIÓN DE DESCRIPCIONES A 4 LÍNEAS (BULLET POINTS)
